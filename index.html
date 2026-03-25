@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>倖存者遊戲 (Survivor Web Game)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas"></canvas>
+        <div id="ui-layer">
+            <div id="hud">
+                <div class="health-bar-container">
+                    <div id="health-bar"></div>
+                </div>
+                <div class="xp-bar-container">
+                    <div id="xp-bar"></div>
+                </div>
+                <div id="timer">00:00</div>
+                <div id="level-display">Level 1</div>
+            </div>
+            <div id="menu-screen" class="hidden">
+                <h1>Survivor Game</h1>
+                <button id="start-btn">開始遊戲</button>
+            </div>
+            <div id="game-over-screen" class="hidden">
+                <h1>遊戲結束</h1>
+                <p>存活時間: <span id="final-time">00:00</span></p>
+                <p>達到等級: <span id="final-level">1</span></p>
+                <button id="restart-btn">重新開始</button>
+            </div>
+            <div id="level-up-screen" class="hidden">
+                <h2>升級！選擇一項能力</h2>
+                <div id="upgrade-options">
+                    <!-- Cards will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
