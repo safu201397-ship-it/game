@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>倖存者遊戲 (Survivor Web Game)</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=7">
 </head>
 <body>
     <div id="game-container">
@@ -19,16 +19,25 @@
                 </div>
                 <div id="timer">00:00</div>
                 <div id="level-display">Level 1</div>
+                <div id="score-display">Score: 0</div>
             </div>
-            <div id="menu-screen" class="hidden">
-                <h1>Survivor Game</h1>
-                <button id="start-btn">開始遊戲</button>
+            <div id="menu-screen" class="overlay">
+                <div class="panel">
+                    <h1>倖存者遊戲</h1>
+                    <p>WASD / 方向鍵移動，自動攻擊</p>
+                    <div id="menu-leaderboard" class="leaderboard-container"></div>
+                    <button id="start-btn" class="btn">開始遊戲</button>
+                </div>
             </div>
-            <div id="game-over-screen" class="hidden">
-                <h1>遊戲結束</h1>
-                <p>存活時間: <span id="final-time">00:00</span></p>
-                <p>達到等級: <span id="final-level">1</span></p>
-                <button id="restart-btn">重新開始</button>
+            <div id="game-over-screen" class="overlay hidden">
+                <div class="panel">
+                    <h1>遊戲結束</h1>
+                    <p>存活時間: <span id="final-time">00:00</span></p>
+                    <p>達到等級: <span id="final-level">1</span></p>
+                    <p>最終分數: <span id="final-score">0</span></p>
+                    <div id="gameover-leaderboard" class="leaderboard-container"></div>
+                    <button id="restart-btn" class="btn">重新開始</button>
+                </div>
             </div>
             <div id="level-up-screen" class="hidden">
                 <h2>升級！選擇一項能力</h2>
@@ -38,6 +47,6 @@
             </div>
         </div>
     </div>
-    <script src="main.js"></script>
+    <script src="main.js?v=6"></script>
 </body>
 </html>

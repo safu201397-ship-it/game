@@ -94,12 +94,51 @@ canvas {
 
 #level-display {
     position: absolute;
-    top: 20px;
-    right: 30px;
+    bottom: -20px;
+    right: -20px;
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle, rgba(0, 242, 254, 0.2) 0%, rgba(79, 172, 254, 0) 70%);
+}
+
+#score-display {
+    color: #ffd700;
     font-size: 20px;
     font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    margin: 0 20px;
 }
+
+.leaderboard-container {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 20px 0;
+    text-align: left;
+    min-width: 250px;
+}
+.leaderboard-title {
+    color: #fff;
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 5px;
+}
+.leaderboard-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ddd;
+    margin-bottom: 7px;
+    font-family: monospace;
+    font-size: 16px;
+}
+.leaderboard-item.rank-1 { color: #ffd700; font-weight: bold; text-shadow: 0 0 5px rgba(255,215,0,0.5); }
+.leaderboard-item.rank-2 { color: #c0c0c0; }
+.leaderboard-item.rank-3 { color: #cd7f32; }
+.leaderboard-item.highlight { background: rgba(255,255,255,0.15); border-radius: 4px; padding: 4px 6px; margin-left: -6px; margin-right: -6px; }
 
 /* Screens */
 #menu-screen, #game-over-screen, #level-up-screen {
