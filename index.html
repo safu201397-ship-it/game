@@ -1,52 +1,5285 @@
 <!DOCTYPE html>
+
 <html lang="zh-TW">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>倖存者遊戲 (Survivor Web Game)</title>
-    <link rel="stylesheet" href="style.css?v=7">
+
+  <base target="_top">
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>115學年度公私立大專校院招生研討會議</title>
+
+  <style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap');
+
+    
+
+    :root {
+
+      --primary: #0F4C81;       /* 皇家學術深藍 */
+
+      --primary-hover: #072B4D;
+
+      --primary-light: #F0F6FA;
+
+      --accent: #D97706;        /* 琥珀金/橘黃點綴 */
+
+      --accent-hover: #B45309;
+
+      --success: #059669;
+
+      --error: #DC2626;
+
+      --bg-color: #FFFFFF;      /* 極輕淺藍灰底色 */
+
+      --card-bg: #FFFFFF;
+
+      --text: #000000;          /* 純黑提供最清晰對比 */          /* 深 Slate 碳黑 */
+
+      --text-light: #1E293B;    /* 深灰提高對比度 */
+
+      --text-muted: #576574;    /* 提高輔助說明文字對比 */
+
+      --border-color: #CBD5E1;
+
+    }
+
+
+
+    * {
+
+      box-sizing: border-box;
+
+      margin: 0;
+
+      padding: 0;
+
+    }
+
+
+
+    body {
+      font-size: 18px !important;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+
+      font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'Segoe UI', sans-serif;
+
+      background-color: var(--bg-color);
+
+      color: var(--text);
+
+      line-height: 1.75;
+
+      -webkit-font-smoothing: antialiased;
+
+      -moz-osx-font-smoothing: grayscale;
+
+      text-rendering: optimizeLegibility;
+
+      font-size: 16.5px;
+
+    }
+
+
+
+    /* 頂部大氣導覽列 */
+
+    .navbar {
+
+      background: white;
+
+      box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+
+      position: sticky;
+
+      top: 0;
+
+      z-index: 100;
+
+      padding: 16px 5%;
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      border-bottom: 1px solid var(--border-color);
+
+    }
+
+
+
+    .navbar-brand {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+      font-weight: 700;
+
+      font-size: 21px;
+
+      color: var(--primary);
+
+      text-decoration: none;
+
+      letter-spacing: -0.5px;
+
+    }
+
+
+
+    /* 導覽頁籤 */
+
+    .nav-links {
+
+      display: flex;
+
+      gap: 8px;
+
+    }
+
+
+
+    .nav-link {
+
+      color: var(--text-light);
+
+      text-decoration: none;
+
+      font-weight: 700;
+
+      font-size: 16px;
+
+      padding: 8px 18px;
+
+      border-radius: 6px;
+
+      transition: all 0.2s ease;
+
+      cursor: pointer;
+
+      user-select: none;
+
+    }
+
+
+
+    .nav-link:hover {
+
+      color: var(--primary);
+
+      background: var(--primary-light);
+
+    }
+
+
+
+    .nav-link.active {
+
+      color: white;
+
+      background: var(--primary);
+
+    }
+
+
+
+    /* 手機版選單切換按鈕 (預設隱藏) */
+
+    .menu-toggle {
+
+      display: none;
+
+      cursor: pointer;
+
+      color: var(--primary);
+
+      padding: 8px;
+
+      border-radius: 8px;
+
+      transition: background 0.2s;
+
+    }
+
+
+
+    .menu-toggle:hover {
+
+      background: var(--primary-light);
+
+    }
+
+
+
+    @media (max-width: 900px) {
+
+      .navbar {
+
+        padding: 12px 20px;
+
+      }
+
+
+
+      .navbar-brand {
+
+        font-size: 16.5px;
+
+        flex: 1;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+
+      }
+
+
+
+      .menu-toggle {
+
+        display: block;
+
+      }
+
+
+
+      .nav-links {
+
+        display: none;
+
+        position: absolute;
+
+        top: 100%;
+
+        left: 0;
+
+        right: 0;
+
+        background: white;
+
+        flex-direction: column;
+
+        gap: 4px;
+
+        padding: 12px 20px;
+
+        border-bottom: 1px solid var(--border-color);
+
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+
+        z-index: 99;
+
+      }
+
+
+
+      .nav-links.show {
+
+        display: flex;
+
+        animation: slideDown 0.25s ease-out;
+
+      }
+
+
+
+      .nav-link {
+
+        width: 100%;
+
+        padding: 12px 16px;
+
+        border-radius: 8px;
+
+        font-size: 16px;
+
+      }
+
+    }
+
+
+
+    @keyframes slideDown {
+
+      from { opacity: 0; transform: translateY(-10px); }
+
+      to { opacity: 1; transform: translateY(0); }
+
+    }
+
+
+
+    /* 網頁主視圖容器 (寬度 100%，以利 Banner 滿版) */
+
+    .portal-container {
+
+      width: 100%;
+
+      margin: 0;
+
+      padding: 0;
+
+    }
+
+
+
+    /* 視圖切換區塊 */
+
+    .view-section {
+
+      display: none;
+
+    }
+
+
+
+    .view-section.active {
+
+      display: block;
+
+      animation: fadeIn 0.4s ease-in-out;
+
+    }
+
+
+
+    @keyframes fadeIn {
+
+      from { opacity: 0; transform: translateY(15px); }
+
+      to { opacity: 1; transform: translateY(0); }
+
+    }
+
+
+
+    /* 100% 滿版 Banner 設計 */
+
+    .hero-banner {
+
+      max-width: 100%;
+
+      margin: 0;
+
+      padding: 0;
+
+      overflow: hidden;
+
+      background: transparent;
+
+    }
+
+
+
+    .hero-image {
+
+      width: 100%;
+
+      height: auto;
+
+      display: block;
+
+    }
+
+
+
+    /* 居中內容容器 (限制最大寬度為 1200px，大氣且閱讀舒適) */
+
+    .content-container {
+
+      max-width: 1200px;
+
+      margin: 40px auto;
+
+      padding: 0 30px;
+
+    }
+
+
+
+    @media (max-width: 600px) {
+
+      .content-container {
+
+        padding: 0 15px;
+
+        margin: 20px auto;
+
+      }
+
+      .hero-banner {
+
+        padding: 0;
+
+        margin: 0 auto;
+
+      }
+
+    }
+
+
+
+    /* 報名表專屬寬度限制 (避免桌電版欄位過度拉長，提升易讀性與填表體驗) */
+
+    #register-view .content-container {
+
+      max-width: 800px;
+
+    }
+
+
+
+    /* 卡片通用樣式 */
+
+    .info-card {
+
+      background: transparent;
+
+      border-radius: 0;
+
+      padding: 30px 0;
+
+      border: none;
+
+      border-bottom: 1px solid var(--border-color);
+
+      margin-bottom: 30px;
+
+      position: relative;
+
+    }
+
+
+
+    .box-title {
+
+      font-size: 21px;
+
+      font-weight: 700;
+
+      color: var(--primary);
+
+      margin-bottom: 25px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      border-left: 4px solid var(--primary);
+
+      padding-left: 12px;
+
+    }
+
+
+
+    .bullet-notes {
+
+      font-size: 16px;
+
+      color: var(--text-light);
+
+    }
+
+
+
+    .bullet-notes p {
+
+      margin-bottom: 16px;
+
+      text-indent: -1.2em;
+
+      padding-left: 1.2em;
+
+      line-height: 1.7;
+
+    }
+
+
+
+    /* 首頁大會核心資訊 4 欄格 */
+
+    .core-info-grid {
+
+      display: grid;
+
+      grid-template-columns: repeat(4, 1fr);
+
+      gap: 20px;
+
+      margin-bottom: 30px;
+
+    }
+
+
+
+    @media (max-width: 900px) {
+
+      .core-info-grid {
+
+        grid-template-columns: repeat(2, 1fr);
+
+      }
+
+    }
+
+
+
+    @media (max-width: 550px) {
+
+      .core-info-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+    }
+
+
+
+    .core-info-item {
+
+      background: var(--primary-light);
+
+      border-radius: 12px;
+
+      padding: 20px;
+
+      border: 1px solid rgba(15, 76, 129, 0.08);
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: flex-start;
+
+    }
+
+
+
+    .core-info-item .label {
+
+      font-weight: 700;
+
+      font-size: 16px;
+
+      color: var(--primary);
+
+      margin-bottom: 8px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+    }
+
+
+
+    .core-info-item .value {
+
+      font-size: 15px;
+
+      font-weight: 700;
+
+      color: var(--text);
+
+      line-height: 1.5;
+
+    }
+
+
+
+    /* 接駁資訊排版 */
+
+    .shuttle-title {
+
+      font-size: 17.5px;
+
+      font-weight: 700;
+
+      color: var(--primary);
+
+      margin-top: 30px;
+
+      margin-bottom: 12px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 6px;
+
+    }
+
+
+
+    .shuttle-table {
+
+      width: 100%;
+
+      border-collapse: collapse;
+
+      font-size: 15.5px;
+
+      margin-bottom: 15px;
+
+      border: 1px solid var(--border-color);
+
+      border-radius: 10px;
+
+      overflow: hidden;
+
+    }
+
+
+
+    .shuttle-table th {
+
+      background: var(--primary-light);
+
+      color: var(--primary);
+
+      font-weight: 700;
+
+      padding: 12px 15px;
+
+      text-align: left;
+
+      border-bottom: 1px solid var(--border-color);
+
+    }
+
+
+
+    .shuttle-table td {
+
+      padding: 12px 15px;
+
+      border-bottom: 1px solid var(--border-color);
+
+      background: white;
+
+    }
+
+
+
+    .shuttle-table tr:last-child td {
+
+      border-bottom: none;
+
+    }
+
+
+
+    .privacy-box {
+
+      font-size: 15.5px;
+
+      color: var(--text-light);
+
+      background-color: var(--primary-light);
+
+      border-radius: 12px;
+
+      padding: 24px;
+
+      border: 1px solid rgba(15, 76, 129, 0.05);
+
+      line-height: 1.7;
+
+    }
+
+
+
+    /* 交通引導卡片 (3 欄式並排，極為大氣) */
+
+    .traffic-grid {
+
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 20px;
+
+      margin-top: 10px;
+
+    }
+
+
+
+    @media (max-width: 900px) {
+
+      .traffic-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+    }
+
+
+
+    .traffic-card {
+
+      background: var(--primary-light);
+
+      border-radius: 8px;
+
+      border: 1px solid rgba(15, 76, 129, 0.08);
+
+      padding: 20px;
+
+      display: flex;
+
+      flex-direction: column;
+
+    }
+
+
+
+    .traffic-header {
+
+      font-size: 15px;
+
+      font-weight: 700;
+
+      color: var(--primary);
+
+      margin-bottom: 12px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+      padding-bottom: 8px;
+
+      border-bottom: 1px solid var(--border-color);
+
+    }
+
+
+
+    /* 住宿寬版卡片 */
+
+    .rooms-grid {
+
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 25px;
+
+      margin-top: 20px;
+
+      margin-bottom: 30px;
+
+    }
+
+
+
+    @media (max-width: 768px) {
+
+      .rooms-grid {
+
+        grid-template-columns: 1fr;
+
+      }
+
+    }
+
+
+
+    .room-card {
+
+      background: var(--primary-light);
+
+      border-radius: 12px;
+
+      border: 1px solid rgba(15, 76, 129, 0.08);
+
+      padding: 24px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      justify-content: space-between;
+
+      transition: all 0.2s ease;
+
+    }
+
+
+
+    .room-card:hover {
+
+      border-color: var(--primary);
+
+      box-shadow: 0 8px 20px rgba(15, 76, 129, 0.05);
+
+    }
+
+
+
+    .room-name {
+
+      font-size: 17.5px;
+
+      font-weight: 700;
+
+      color: var(--text);
+
+      margin-bottom: 8px;
+
+    }
+
+
+
+    .room-price {
+
+      font-size: 24px;
+
+      font-weight: 700;
+
+      color: var(--accent);
+
+      margin: 12px 0;
+
+    }
+
+
+
+    .room-desc {
+
+      font-size: 15.5px;
+
+      color: var(--text-light);
+
+    }
+
+
+
+    /* 報名表單 (寬版 3 欄式設計) */
+
+    .form-container-card {
+
+      background: transparent;
+
+      border-radius: 0;
+
+      padding: 30px 0;
+
+      border: none;
+
+      width: 100%;
+
+    }
+
+
+
+    .form-row-3 {
+
+      display: grid;
+
+      grid-template-columns: 1fr 1fr 1fr;
+
+      gap: 20px;
+
+    }
+
+
+
+    .form-row-2 {
+
+      display: grid;
+
+      grid-template-columns: 1.8fr 1fr;
+
+      gap: 20px;
+
+    }
+
+
+
+    .form-row-half {
+
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 20px;
+
+    }
+
+
+
+    @media (max-width: 850px) {
+
+      .form-row-3, .form-row-2, .form-row-half {
+
+        grid-template-columns: 1fr;
+
+        gap: 0;
+
+      }
+
+    }
+
+
+
+    /* 區塊淡淡的色塊 */
+
+    .form-section-block {
+
+      background-color: #F8FAFC; /* 極淡的灰藍底色 */
+
+      border: 1px solid #E2E8F0;
+
+      border-radius: 12px;
+
+      padding: 28px 24px;
+
+      margin-bottom: 24px;
+
+    }
+
+
+
+    .form-group {
+
+      margin-bottom: 24px;
+
+      position: relative;
+
+    }
+
+
+
+    .form-group.span-2 {
+
+      grid-column: span 2;
+
+    }
+
+
+
+    .form-group.span-3 {
+
+      grid-column: span 3;
+
+    }
+
+
+
+    @media (max-width: 850px) {
+
+      .form-group.span-2,
+
+      .form-group.span-3 {
+
+        grid-column: span 1;
+
+      }
+
+    }
+
+    /* 議程表格手機版 */
+    @media (max-width: 768px) {
+      .agenda-table { min-width: 0 !important; font-size: 14px !important; }
+      .agenda-table thead { display: none; }
+      .agenda-table tbody tr { display: block; border: 1px solid #e2e8f0; border-radius: 8px; margin: 0 10px 10px 10px; padding: 14px 16px; background: #fff; }
+      .agenda-table tbody tr:nth-child(odd) { background: #fafbff; }
+      .agenda-table tbody td { display: block; border: none !important; padding: 4px 0 !important; text-align: left !important; writing-mode: horizontal-tb !important; letter-spacing: normal !important; font-size: 14px; }
+      .agenda-table tbody td[data-label]::before { content: attr(data-label) '：'; font-weight: 700; color: var(--primary); margin-right: 4px; }
+      .agenda-table tbody td[data-label="日期"] { font-weight: 700; color: var(--primary); font-size: 14px; margin-bottom: 4px; padding-bottom: 4px !important; border-bottom: 1px solid #e2e8f0 !important; }
+      .agenda-table tbody td[data-label="活動內容"] { font-weight: 600; }
+      .agenda-table tbody td[data-label="日期"] { display: none !important; }
+      .agenda-table tbody td.mobile-hidden { display: none !important; }
+      .agenda-table tbody td:empty:not([data-label]) { display: none; }
+      .agenda-day-header { display: block !important; }
+      .agenda-table tbody tr.agenda-day-header td { display: block !important; border-radius: 8px !important; text-align: center !important; margin: 0 10px 6px 10px; padding: 14px 24px !important; background: var(--primary) !important; color: white !important; font-weight: 700 !important; font-size: 14px !important; }
+    }
+    .agenda-day-header { display: none; }
+
+    .form-group > label {
+      display: block;
+      margin-bottom: 14px;
+      font-weight: 800;
+      font-size: 17px;
+      color: var(--primary); /* 深藍色標題 */
+      border-bottom: 2px solid var(--border-color); /* 底部一條乾淨的線條 */
+      padding-bottom: 8px;
+      line-height: 1.5;
+    }
+
+
+
+    .form-group label span.required {
+
+      color: var(--error);
+
+      margin-left: 3px;
+
+    }
+
+
+
+    .form-group input[type="text"],
+
+    .form-group input[type="email"],
+
+    .form-group input[type="tel"],
+
+    .form-group input[type="date"],
+
+    .form-group select {
+
+      width: 100%;
+
+      padding: 12px 16px;
+
+      border: 1px solid #CBD5E1; /* 細緻的框線 */
+
+      border-radius: 8px;
+
+      font-size: 16.5px;
+
+      color: #000000;
+
+      transition: all 0.2s ease;
+
+      font-family: inherit;
+
+      background-color: #FFFFFF;
+
+      font-weight: 500;
+
+    }
+
+
+
+    .form-group input:focus,
+
+    .form-group select:focus {
+
+      outline: none;
+
+      border-color: var(--primary);
+
+      box-shadow: 0 0 0 3px rgba(15, 76, 129, 0.15);
+
+    }
+
+
+
+    .form-group input.error-border {
+
+      border-color: var(--error);
+
+      border-width: 1.5px;
+
+    }
+
+
+
+    .error-text {
+
+      color: var(--error);
+
+      font-size: 13.5px;
+
+      font-weight: 700;
+
+      margin-top: 5px;
+
+      display: none;
+
+    }
+
+
+
+    .helper-text {
+
+      color: #576574;
+
+      font-size: 13.5px;
+
+      margin-top: 5px;
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 4px;
+
+    }
+
+
+
+    
+    /* 單選與多選按鈕卡片 */
+    .choice-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+
+    .choice-card {
+      position: relative;
+    }
+
+    .choice-card input[type="radio"],
+    .choice-card input[type="checkbox"] {
+      position: absolute;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      margin: 0;
+      padding: 0;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      z-index: -1;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    .choice-label {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      cursor: pointer;
+      font-size: 16.5px;
+      font-weight: 500;
+      color: #1E293B;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .choice-label::before {
+      content: "";
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #CBD5E1;
+      border-radius: 50%;
+      margin-right: 8px;
+      background-color: white;
+      transition: all 0.2s ease;
+      vertical-align: middle;
+    }
+
+    
+    .choice-card input[type="checkbox"] + .choice-label::before {
+      border-radius: 4px;
+    }
+    .choice-card input:checked + .choice-label::before {
+      border-color: var(--primary);
+      background-color: var(--primary);
+      box-shadow: inset 0 0 0 4px white;
+    }
+
+    .choice-card input:disabled + .choice-label {
+      color: #94A3B8;
+      cursor: default;
+    }
+
+    .choice-card input:disabled + .choice-label::before {
+      background-color: #F1F5F9;
+      border-color: #CBD5E1;
+    }
+
+    .vertical-choice-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .vertical-choice-list .choice-label {
+      font-size: 16px;
+      color: #334155;
+    }
+
+    /* 展開子面板 */
+
+    .conditional-panel {
+
+      max-height: 0;
+
+      overflow: hidden;
+
+      transition: max-height 0.3s ease-out, opacity 0.3s ease-out, margin-top 0.3s;
+
+      opacity: 0;
+
+      background: #F8FAFC;
+
+      border-radius: 10px;
+
+      padding: 0;
+
+      margin-top: 0;
+
+      border: 0 solid #E2E8F0;
+
+    }
+
+
+
+    .conditional-panel.show {
+
+      max-height: 1000px;
+
+      opacity: 1;
+
+      padding: 24px;
+
+      margin-top: 12px;
+
+      border-width: 1px;
+
+    }
+
+
+
+    /* 按鈕 */
+
+    .btn-group {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      gap: 15px;
+
+      margin-top: 35px;
+
+    }
+
+
+
+    .btn {
+
+      flex: 1;
+
+      padding: 15px;
+
+      border-radius: 8px;
+
+      font-size: 15px;
+
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition: all 0.2s ease;
+
+      font-family: inherit;
+
+      border: none;
+
+      text-align: center;
+
+      user-select: none;
+
+    }
+
+
+
+    .btn-primary {
+
+      background: var(--primary);
+
+      color: white;
+
+    }
+
+
+
+    .btn-primary:hover {
+
+      background: var(--primary-hover);
+
+    }
+
+
+
+    .btn-secondary {
+
+      background: #E2E8F0;
+
+      color: #475569;
+
+    }
+
+
+
+    .btn-secondary:hover {
+
+      background: #CBD5E1;
+
+    }
+
+
+
+    .btn:disabled {
+
+      background: #94A3B8;
+
+      color: white;
+
+      cursor: not-allowed;
+
+    }
+
+
+
+    /* 成功視圖 */
+
+    #success-view {
+
+      display: none;
+
+      text-align: center;
+
+    }
+
+
+
+    #success-view.active {
+
+      display: block;
+
+      animation: fadeIn 0.5s ease-out;
+
+    }
+
+
+
+    .success-icon {
+
+      width: 68px;
+
+      height: 68px;
+
+      background: #D1FAE5;
+
+      color: var(--success);
+
+      border-radius: 50%;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      font-size: 36px;
+
+      margin: 0 auto 20px auto;
+
+    }
+
+
+
+    .success-details {
+
+      background: #F8FAFC;
+
+      border-radius: 12px;
+
+      padding: 24px;
+
+      margin: 25px 0;
+
+      text-align: left;
+
+      font-size: 16px;
+
+      border: 1px solid var(--border-color);
+
+      max-width: 600px;
+
+      margin-left: auto;
+
+      margin-right: auto;
+
+    }
+
+
+
+    .success-details h3 {
+
+      font-size: 16px;
+
+      color: var(--primary);
+
+      margin-bottom: 15px;
+
+      text-align: center;
+
+      border-bottom: 1px solid var(--border-color);
+
+      padding-bottom: 8px;
+
+    }
+
+
+
+    .success-details p {
+
+      margin-bottom: 10px;
+
+    }
+
+
+
+    .success-details p strong {
+
+      color: var(--text);
+
+      display: inline-block;
+
+      width: 100px;
+
+    }
+
+
+
+        .barcode-section {
+      display: flex;
+      justify-content: center;
+      margin-top: 25px;
+    }
+
+
+
+    .barcode-card {
+
+      background: white;
+
+      border: 1px solid var(--border-color);
+
+      border-radius: 12px;
+
+      padding: 20px;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      justify-content: center;
+
+    }
+
+
+
+    .barcode-card h4 {
+
+      font-size: 15.5px;
+
+      color: var(--text-light);
+
+      margin-bottom: 12px;
+
+    }
+
+
+
+    .barcode-card img {
+
+      max-width: 100%;
+
+      height: auto;
+
+    }
+
+
+
+    .loader-container {
+
+      display: none;
+
+      text-align: center;
+
+      padding: 30px 0;
+
+    }
+
+
+
+    .loader {
+
+      border: 4px solid #F1F5F9;
+
+      border-radius: 50%;
+
+      border-top: 4px solid var(--primary);
+
+      width: 40px;
+
+      height: 40px;
+
+      animation: spin 1s linear infinite;
+
+      margin: 0 auto 15px auto;
+
+    }
+
+
+
+     @keyframes spin {
+
+      0% { transform: rotate(0deg); }
+
+      100% { transform: rotate(360deg); }
+
+    }
+
+
+
+    /* 步驟進度條與指示器 */
+
+    .steps-indicator {
+
+      display: flex;
+
+      justify-content: space-between;
+
+      align-items: center;
+
+      position: relative;
+
+      margin-bottom: 45px;
+
+      padding: 0 40px;
+
+    }
+
+
+
+    .step-progress-bar {
+
+      position: absolute;
+
+      top: 20px;
+
+      left: 80px;
+
+      right: 80px;
+
+      height: 4px;
+
+      background: var(--border-color);
+
+      z-index: 1;
+
+      border-radius: 2px;
+
+      transition: all 0.3s ease;
+
+    }
+
+
+
+    .step-item {
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      position: relative;
+
+      z-index: 2;
+
+      cursor: default;
+
+    }
+
+
+
+    .step-number {
+
+      width: 40px;
+
+      height: 40px;
+
+      background: white;
+
+      border: 3px solid var(--border-color);
+
+      border-radius: 50%;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      font-weight: 700;
+
+      font-size: 16.5px;
+
+      color: var(--text-light);
+
+      transition: all 0.3s ease;
+
+    }
+
+
+
+    .step-label {
+
+      margin-top: 8px;
+
+      font-size: 15.5px;
+
+      font-weight: 700;
+
+      color: var(--text-muted);
+
+      transition: all 0.3s ease;
+
+      text-align: center;
+
+    }
+
+
+
+    /* 啟用/完成狀態 */
+
+    .step-item.active .step-number {
+
+      border-color: var(--primary);
+
+      background: var(--primary);
+
+      color: white;
+
+    }
+
+
+
+    .step-item.active .step-label {
+
+      color: var(--primary);
+
+    }
+
+
+
+    .step-item.completed .step-number {
+
+      border-color: var(--success);
+
+      background: var(--success);
+
+      color: white;
+
+    }
+
+
+
+    .step-item.completed .step-label {
+
+      color: var(--success);
+
+    }
+
+
+
+    /* 表單步驟控制 */
+
+    .form-step {
+
+      display: none;
+
+    }
+
+
+
+    .form-step.active {
+
+      display: block;
+
+      animation: fadeIn 0.4s ease-in-out;
+
+    }
+
+
+
+    /* 段落標題 */
+    .section-title {
+      font-size: 18.5px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 10px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .detail-row {
+      display: flex;
+      padding: 12px 16px;
+      border-bottom: 1px solid #F1F5F9;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    .detail-label {
+      flex: 0 0 140px;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    .detail-value {
+      flex: 1;
+      color: var(--text-main);
+      font-weight: 600;
+      word-break: break-word;
+    }
+  </style>
 </head>
 <body>
-    <div id="game-container">
-        <canvas id="game-canvas"></canvas>
-        <div id="ui-layer">
-            <div id="hud">
-                <div class="health-bar-container">
-                    <div id="health-bar"></div>
-                </div>
-                <div class="xp-bar-container">
-                    <div id="xp-bar"></div>
-                </div>
-                <div id="timer">00:00</div>
-                <div id="level-display">Level 1</div>
-                <div id="score-display">Score: 0</div>
-            </div>
-            <div id="menu-screen" class="overlay">
-                <div class="panel">
-                    <h1>倖存者遊戲</h1>
-                    <p>WASD / 方向鍵移動，自動攻擊</p>
-                    <div id="menu-leaderboard" class="leaderboard-container"></div>
-                    <button id="start-btn" class="btn">開始遊戲</button>
-                </div>
-            </div>
-            <div id="game-over-screen" class="overlay hidden">
-                <div class="panel">
-                    <h1>遊戲結束</h1>
-                    <p>存活時間: <span id="final-time">00:00</span></p>
-                    <p>達到等級: <span id="final-level">1</span></p>
-                    <p>最終分數: <span id="final-score">0</span></p>
-                    <div id="gameover-leaderboard" class="leaderboard-container"></div>
-                    <button id="restart-btn" class="btn">重新開始</button>
-                </div>
-            </div>
-            <div id="level-up-screen" class="hidden">
-                <h2>升級！選擇一項能力</h2>
-                <div id="upgrade-options">
-                    <!-- Cards will be injected here -->
-                </div>
-            </div>
-        </div>
+
+  <!-- 頂部大氣導覽列 -->
+  <nav class="navbar">
+    <a href="#" class="navbar-brand" onclick="switchView('home')">
+      <svg width="26" height="26" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/><path d="M22 19c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V9.24l10 5.45 10-5.45V19z"/></svg>
+      115學年度公私立大專校院招生研討會議
+    </a>
+
+    <!-- 手機版漢堡選單按鈕 -->
+    <div class="menu-toggle" id="menuToggle" aria-label="切換選單">
+      <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
     </div>
-    <script src="main.js?v=6"></script>
+    
+    <!-- 大會導覽分頁標籤 -->
+    <div class="nav-links">
+      <span id="nav-home" class="nav-link active" onclick="switchView('home')">會議首頁</span>
+      <span id="nav-agenda" class="nav-link" onclick="switchView('agenda')">會議議程</span>
+      <span id="nav-traffic" class="nav-link" onclick="switchView('traffic')">活動交通</span>
+      <span id="nav-lodging" class="nav-link" onclick="switchView('lodging')">住宿資訊</span>
+      <span id="nav-visit" class="nav-link" onclick="switchView('visit')">活動參訪</span>
+      <span id="nav-download" class="nav-link" onclick="switchView('download')">資料下載</span>
+      <span id="nav-register" class="nav-link" onclick="switchView('register')">線上報名</span>
+    </div>
+  </nav>
+
+  <!-- 網頁主容器 -->
+  <div class="portal-container">
+
+    <!-- ==================== VIEW 1: 會議首頁 (單欄 100% 全寬 Banner 版) ==================== -->
+
+    <div id="home-view" class="view-section active">
+
+      <!-- 100% 全寬滿版 Banner -->
+
+      <div class="hero-banner">
+
+        <img src="https://www.isu.edu.tw/storage/images/cYwBfjQeUGXLlcm5400RoG5sZZnrhqELCV0XWmTd.jpg" alt="115學年度公私立大專校院招生研討會議" class="hero-image">
+
+      </div>
+
+
+
+      <!-- 居中主體內容容器 -->
+
+      <div class="content-container">
+
+        
+
+        <!-- 大會核心資訊 (側邊欄改為橫向 4 欄精緻大方格) -->
+
+        <div class="core-info-grid">
+
+          <div class="core-info-item">
+
+            <div class="label">會議日期</div>
+
+            <div class="value">115年8月25日、26日</div>
+
+          </div>
+
+          <div class="core-info-item">
+
+            <div class="label">會議地點</div>
+
+            <div class="value">義守大學校本部體育館<br>(高雄市大樹區學城路一段1號)</div>
+
+          </div>
+
+          <div class="core-info-item">
+
+            <div class="label">住宿地點</div>
+
+            <div class="value">義大皇家酒店<br>(高雄市大樹區學城路一段153號)</div>
+
+          </div>
+
+          <div class="core-info-item">
+
+            <div class="label">承辦與指導單位</div>
+
+            <div class="value">承辦單位：義守大學<br>指導單位：教育部</div>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- 會議說明 -->
+
+        <div class="info-card">
+
+          <div class="box-title">
+
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+
+            會議說明
+
+          </div>
+
+          <div class="bullet-notes">
+
+            <p>※ 出席本次會議之差假及差旅費請依各校相關規定自理。</p>
+
+            <p>※ 歡迎貴校就招生相關業務踴躍提案，提案單請於下載專區下載，填妥後請於 <strong>115年7月17日前</strong>將提案單電子檔回傳。</p>
+
+            <p>※ 本次會議可登錄公務人員終身學習時數，請於線上報名填表時，勾選是否需要登錄。</p>
+
+            <p>※ 本次會議將於會議舉辦前一週，以電子郵件 (e-mail) 寄送行前通知給已報名之與會人員。</p>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- 集合時間與接駁資訊 -->
+
+        <div class="info-card">
+
+          <div class="box-title">
+
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42.99L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+
+            大會接駁車集合時間及地點
+
+          </div>
+
+
+
+          <div class="shuttle-title">8月25日 (第一天) 接駁車班次</div>
+
+          <table class="shuttle-table">
+
+            <thead>
+
+              <tr>
+
+                <th style="width: 140px;">行程別</th>
+
+                <th style="width: 140px;">發車時間</th>
+
+                <th>行駛路線</th>
+
+                <th>搭乘集合地點</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr>
+
+                <td style="font-weight: 600; color: var(--accent);">去程</td>
+
+                <td style="font-weight: bold; font-size:14.5px;">11:20</td>
+
+                <td>高鐵左營站 ➔ 義守大學</td>
+
+                <td>高鐵左營站 <strong>4號出口 (星巴克前)</strong></td>
+
+              </tr>
+
+              <tr>
+
+                <td style="font-weight: 600; color: var(--text-light);">回程</td>
+
+                <td style="font-weight: bold; font-size:14.5px;">18:10</td>
+
+                <td>義守大學 ➔ 高鐵左營站</td>
+
+                <td>體育館外廣場</td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+          <p style="font-size: 12.5px; color: var(--error); margin-bottom: 25px; font-weight: bold; padding-left: 5px;">
+
+            ※ 備註：參與晚宴者可搭乘接駁專車或自行前往義大皇家酒店，晚宴結束後未安排住宿者，請自行安排返程交通。
+
+          </p>
+
+
+
+          <div class="shuttle-title">8月26日 (第二天) 接駁車班次</div>
+
+          <table class="shuttle-table">
+
+            <thead>
+
+              <tr>
+
+                <th style="width: 140px;">行程別</th>
+
+                <th style="width: 140px;">發車時間</th>
+
+                <th>行駛路線</th>
+
+                <th>搭乘集合地點</th>
+
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              <tr>
+
+                <td style="font-weight: 600; color: var(--accent);" rowspan="2">去程</td>
+
+                <td style="font-weight: bold; font-size:14.5px;">08:30</td>
+
+                <td>高鐵左營站 ➔ 義守大學</td>
+
+                <td>高鐵左營站 <strong>4號出口 (星巴克前)</strong></td>
+
+              </tr>
+
+              <tr>
+
+                <td style="font-weight: bold; font-size:14.5px;">08:50</td>
+
+                <td>義大皇家酒店 ➔ 義守大學</td>
+
+                <td>義大皇家酒店 <strong>飯店大廳</strong></td>
+
+              </tr>
+
+              <tr>
+
+                <td style="font-weight: 600; color: var(--text-light);" rowspan="2">回程</td>
+
+                <td style="font-weight: bold; font-size:14.5px;">12:30</td>
+
+                <td>義守大學 ➔ 高鐵左營站</td>
+
+                <td>體育館外廣場</td>
+
+              </tr>
+
+              <tr>
+
+                <td style="font-weight: bold; color: var(--text-muted);">16：30(仍須依實際狀況調整)</td>
+
+                <td>參訪地點 ➔ 高鐵左營站</td>
+
+                <td></td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+
+
+        <!-- 個人資料之聲明 -->
+
+        <div class="info-card">
+
+          <div class="box-title" style="color: var(--text-light);">
+
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v9.8z"/></svg>
+
+            個人資料之蒐集及運用聲明
+
+          </div>
+
+          <div class="privacy-box">
+
+            <p style="margin-bottom: 10px;">1. 報名本項活動時，因應活動辦理之需求，將因活動辦理需求請您提供個人資料、交通、住宿資訊，以便辦理報到、旅遊平安保險及交通食宿等安排。</p>
+
+            <p style="margin-bottom: 10px;">2. 您所提供之個人資料，將會遵循「個人資料保護法」及相關法令規定，於業務範圍內使用，不會將其應用於蒐集特定目的以外之用途。</p>
+
+            <p>3. 本校有義務保護您的個人隱私，不會任意修改、刪除、出售或交換您的個人資料。</p>
+
+          </div>
+
+        </div>
+
+
+
+        <!-- 立即報名 CTA 按鈕 -->
+
+        <div style="text-align: center; margin: 40px 0 20px 0;">
+
+          <button class="btn btn-primary" style="max-width: 380px; padding: 16px 45px; font-size: 16.5px; font-weight: 600; letter-spacing: 1px; border-radius: 4px; box-shadow: 0 4px 12px rgba(15, 76, 129, 0.15); border: 1px solid var(--primary);" onclick="switchView('register')">
+            前往線上出席報名系統
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+
+
+    <!-- ==================== VIEW 2: 會議議程 ==================== -->
+
+    <div id="agenda-view" class="view-section">
+      <div class="content-container">
+        <div class="form-container-card">
+          <div class="box-title" style="margin-bottom: 25px;">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            會議議程
+          </div>
+
+          <div style="overflow-x: auto;">
+            <table class="agenda-table" style="width: 100%; border-collapse: collapse; font-size: 15px; min-width: 820px;">
+              <thead>
+                <tr style="background: var(--primary); color: white;">
+                  <th style="padding: 12px 14px; text-align: center; font-weight: 600; width: 70px; border: 1px solid #0d3f6a;">日期</th>
+                  <th style="padding: 12px 14px; text-align: center; font-weight: 600; width: 120px; border: 1px solid #0d3f6a;">時　間</th>
+                  <th style="padding: 12px 14px; text-align: left; font-weight: 600; border: 1px solid #0d3f6a;">活動內容</th>
+                  <th style="padding: 12px 14px; text-align: center; font-weight: 600; width: 150px; border: 1px solid #0d3f6a;">主持人／主講人</th>
+                  <th style="padding: 12px 14px; text-align: center; font-weight: 600; width: 160px; white-space: nowrap; border: 1px solid #0d3f6a;">地　點</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="agenda-day-header"><td colspan="5" style="padding: 14px 24px; background: var(--primary); color: white; font-weight: 700; font-size: 15px; border: 1px solid #0d3f6a;">8月25日（星期二）</td></tr>
+                <tr>
+                  <td rowspan="10" style="padding: 10px 8px; text-align: center; font-weight: 700; color: var(--primary); background: #f8fafc; border: 1px solid #e2e8f0; writing-mode: vertical-lr; letter-spacing: 2px;">八月二十五日（二）</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">11:30-12:00</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">報到</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">義守大學</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">義守大學體育館</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">12:00-13:00</td>
+                  <td colspan="2" style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;color: var(--primary);">午　餐</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">義守大學體育館</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">13:00-13:10</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">致詞</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">教育部<br>義守大學</td>
+                  <td rowspan="7" style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0; vertical-align: middle;">義守大學體育館</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">13:10-14:00</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">專題研討1</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">待聘</td>
+
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">14:00-14:50</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">專題研討2</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">待聘</td>
+
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">14:50-15:10</td>
+                  <td colspan="2" style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;color: var(--primary);">茶敘時間</td>
+
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">15:10-16:00</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">專題研討3</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">待聘</td>
+
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">16:00-16:50</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">專題研討4</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">待聘</td>
+
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">16:50-17:50</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">業務報告</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">教育部</td>
+
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">17:50-20:00</td>
+                  <td colspan="2" style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;color: var(--primary);">前往住宿地點及晚餐</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">義大皇家酒店</td>
+                </tr>
+                <tr class="agenda-day-header"><td colspan="5" style="padding: 12px 16px; background: var(--primary); color: white; font-weight: 700; font-size: 15px; border: 1px solid #0d3f6a;">8月26日（星期三）</td></tr>
+                <tr>
+                  <td rowspan="9" style="padding: 10px 8px; text-align: center; font-weight: 700; color: var(--primary); background: #f8fafc; border: 1px solid #e2e8f0; writing-mode: vertical-lr; letter-spacing: 2px;">八月二十六日（三）</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">07:00-08:30</td>
+                  <td colspan="2" style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;color: var(--primary);">早餐／退房</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">義大皇家酒店</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">08:30-09:00</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">由住宿地點出發前往會場</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;"></td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;"></td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">09:00-09:20</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">報到</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">義守大學</td>
+                  <td rowspan="3" style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0; vertical-align: middle;">義守大學體育館</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">09:20-10:10</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">專題研討5</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">待聘</td>
+
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">10:10-12:10</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">提案討論暨綜合座談</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">教育部</td>
+
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">12:10-13:00</td>
+                  <td colspan="2" style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;color: var(--primary);">午　餐</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;"></td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">13:00</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">無參訪行程<br>（賦　歸）</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;"></td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">左營高鐵</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">13:00-16:00</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">參訪活動</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;"></td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">待定</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">16:30</td>
+                  <td style="padding: 10px 14px; border: 1px solid #e2e8f0; text-align: center;">有參訪行程（賦歸）</td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;"></td>
+                  <td style="padding: 10px 14px; text-align: center; border: 1px solid #e2e8f0;">左營高鐵</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p style="color: #94a3b8; font-size: 13px; margin-top: 16px; text-align: right;">※ 議程如有異動，以大會最新公告為準</p>
+
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+    <!-- ==================== VIEW 3: 活動交通 ==================== -->
+
+    <div id="traffic-view" class="view-section">
+
+      <div class="content-container">
+
+        <div class="info-card">
+
+          <div class="box-title">
+
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+
+            活動交通資訊
+
+          </div>
+
+          
+
+          <div style="font-size: 15px; margin-bottom: 30px; background: var(--primary-light); padding: 18px 25px; border-radius: 10px; color: var(--primary); font-weight: 700;">
+
+            會議地點 (校本部)：高雄市大樹區學城路一段1號 (沿路皆有義守大學指示路標)<br />
+			<img src="https://www.isu.edu.tw/storage/images/Vvz6TwaI7u2qw0GvxF5i4rgJyhGCu8PsCf57VyI4.jpg" style="width:100%">
+
+          </div>
+
+
+
+          <!-- Google Maps 導航區塊 -->
+          <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+              <h3 style="font-size: 18px; font-weight: 800; color: var(--primary); margin: 0; display: flex; align-items: center; gap: 8px;">
+                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                Google 地圖即時導航
+              </h3>
+              <a href="https://www.google.com/maps/dir/?api=1&destination=%E7%BE%A9%E5%AE%88%E5%A4%A7%E5%AD%B8%E6%A0%A1%E6%9C%AC%E9%83%A8" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: var(--primary); color: white; padding: 8px 16px; border-radius: 6px; font-weight: 700; text-decoration: none; font-size: 14px; transition: all 0.2s;">
+                開啟導航 APP
+              </a>
+            </div>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3680.170918731333!2d120.4026363!3d22.7291771!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x346e10f3c570b2db%3A0xe67db5d96a7dd73a!2z576p5a6I5aSn5a24!5e0!3m2!1szh-TW!2stw!4v1717900000000!5m2!1szh-TW!2stw" width="100%" height="350" style="border:0; border-radius: 8px;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div style="font-size: 14px; color: var(--text-light); margin-top: 15px; font-weight: 500; background: #FFFBEB; border-left: 3px solid #D97706; padding: 10px 15px; border-radius: 4px; line-height: 1.6;">
+              💡 <strong>導航關鍵字設定提醒：</strong> 請務必搜尋「<strong>義守大學校本部</strong>」或「<strong>義守大學大樹校區</strong>」，以免導航系統誤導至燕巢醫學院區。
+            </div>
+          </div>
+
+          <h3 class="shuttle-title">
+            <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>
+            詳細開車指引 (行駛國道)
+          </h3>
+          <div class="traffic-grid">
+            <div class="traffic-card">
+              <div class="traffic-header">🚗 由國道 1 號前往</div>
+              <p style="font-size: 15px; color: var(--text-light); line-height: 1.75;">
+                至 <strong>鼎金系統交流道 (362km)</strong> 接國道10號往旗山方向 ➔ 下 <strong>仁武交流道 (6.6km)</strong> ➔ 遇第二個紅綠燈 (水管路) 右轉直走約2公里 ➔ 遇 <strong>義大二路</strong> 左轉直行 ➔ 右轉依校本部指標抵達。
+              </p>
+            </div>
+
+            <div class="traffic-card">
+              <div class="traffic-header">🚗 由國道 3 號前往</div>
+              <p style="font-size: 15px; color: var(--text-light); line-height: 1.75;">
+                過 <strong>燕巢系統交流道 (383km)</strong> 接國道10號往高雄方向 ➔ 下 <strong>下燕巢交流道（13km）</strong> ➔ 左轉嘉保路 ➔ 市道186甲線 ➔ 依校本部指標行駛抵達義守大學校本部。
+              </p>
+            </div>
+
+            <div class="traffic-card">
+              <div class="traffic-header">🚗 高鐵左營站 / 市區出發</div>
+              <p style="font-size: 15px; color: var(--text-light); line-height: 1.75;">
+                由 <strong>大中快速道路</strong> 接國道10號往旗山方向 ➔ 下 <strong>仁武交流道 (6.6km)</strong> ➔ 遇第二個紅綠燈 (水管路) 右轉直走約2公里 ➔ 遇 <strong>義大二路</strong> 左轉直行 ➔ 右轉依校本部指標抵達。
+              </p>
+            </div>
+			
+          </div>
+		  <img src="https://www.isu.edu.tw/storage/images/JerzmPg0aIdTbzddtebKb1Fs8B5jE5OSuKCqcflR.png" style="width:100%">
+
+
+
+            
+
+
+
+            
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+
+
+    <!-- ==================== VIEW 4: 住宿資訊 ==================== -->
+    <div id="lodging-view" class="view-section">
+      <div class="content-container">
+        <div class="info-card">
+          <div class="box-title">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>
+            住宿資訊
+          </div>
+          
+          <p style="font-size: 15px; color: var(--text-light); line-height: 1.7; margin-bottom: 8px;">
+            本次會議住宿地點為<strong>義大皇家酒店</strong>。
+          </p>
+          <p style="font-size: 15px; color: var(--text-light); line-height: 1.7; margin-bottom: 20px;">
+            住宿房型請參考網址：<a href="https://www.edaroyal.com.tw/room/" target="_blank" style="color: var(--primary); font-weight: 600;">https://www.edaroyal.com.tw/room/</a>
+          </p>
+          
+          <div style="font-size: 13.5px; color: var(--text-light); background: #FFFBEB; border-left: 4px solid #D97706; padding: 18px 24px; border-radius: 6px; margin-bottom: 30px; line-height: 1.7;">
+            <strong>＊適逢暑假期間，義大皇家酒店家庭房需求量較大，如雙人房房間不足，將依報名順序協調改為單人房。</strong>
+          </div>
+
+          <h3 style="font-size: 16px; font-weight: 800; color: var(--primary); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 20px;">大會協議房型價格</h3>
+          
+          <div class="rooms-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+            
+            <div class="room-card" style="border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+              <img src="https://www.edaroyal.com.tw/upload/catalog_room_list_pic/twL_catalog_room_23B08_2hVMYG3zSk.jpg" alt="山景客房" style="width: 100%; object-fit: cover;">
+              <div style="padding: 20px;">
+                <div class="room-name" style="font-size: 17px; font-weight: 800; color: var(--primary); margin-bottom: 5px;">單人房 (山景客房)</div>
+                <div class="room-bed" style="font-size: 14px; color: #64748B; margin-bottom: 12px;">一大床</div>
+                <div class="room-price" style="font-size: 22px; font-weight: 800; color: #E63946;">$3,500<span style="font-size: 14px; font-weight: 500; color: #64748B;"> /間 (含1早餐)</span></div>
+              </div>
+            </div>
+
+            <div class="room-card" style="border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+              <img src="https://www.edaroyal.com.tw/upload/catalog_room_list_pic/twL_catalog_room_25A15_ksJ7vXfABD.jpg" alt="雅緻家庭房" style="width: 100%; object-fit: cover;">
+              <div style="padding: 20px;">
+                <div class="room-name" style="font-size: 17px; font-weight: 800; color: var(--primary); margin-bottom: 5px;">雙人房 (雅致家庭房)</div>
+                <div class="room-bed" style="font-size: 14px; color: #64748B; margin-bottom: 12px;">兩中床</div>
+                <div class="room-price" style="font-size: 22px; font-weight: 800; color: #E63946;">$4,000<span style="font-size: 14px; font-weight: 500; color: #64748B;"> /1間 (含2早餐)</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== VIEW 5: 活動參訪 ==================== -->
+    <div id="visit-view" class="view-section">
+      <div class="content-container">
+        <div class="form-container-card">
+          <div class="box-title" style="margin-bottom: 25px;">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            活動參訪
+          </div>
+
+          <!-- 行程總覽 -->
+          <div style="background: linear-gradient(135deg, #0f4c81 0%, #1a6fb5 100%); border-radius: 14px; padding: 32px; margin-bottom: 32px; color: white; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -40px; right: -40px; width: 150px; height: 150px; background: rgba(255,255,255,0.06); border-radius: 50%;"></div>
+            <div style="position: absolute; bottom: -60px; right: 60px; width: 200px; height: 200px; background: rgba(255,255,255,0.04); border-radius: 50%;"></div>
+            <h2 style="margin: 0 0 6px 0; font-size: 22px; font-weight: 800;">🗺️ 參訪行程總覽</h2>
+            <p style="opacity: 0.85; font-size: 14px; margin: 0 0 24px 0;">8月26日（星期三）會議結束後出發，安排兩條精選文化體驗路線，歡迎與會人員擇一參加。</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div style="background: rgba(255,255,255,0.12); border-radius: 10px; padding: 16px; backdrop-filter: blur(10px);">
+                <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">📅 活動日期</div>
+                <div style="font-weight: 700; font-size: 15px;">115年8月26日（三）</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.12); border-radius: 10px; padding: 16px; backdrop-filter: blur(10px);">
+                <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">⏰ 出發時間</div>
+                <div style="font-weight: 700; font-size: 15px;">13:00 會議結束後</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.12); border-radius: 10px; padding: 16px; backdrop-filter: blur(10px);">
+                <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">🚌 交通安排</div>
+                <div style="font-weight: 700; font-size: 15px;">主辦單位接駁專車</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.12); border-radius: 10px; padding: 16px; backdrop-filter: blur(10px);">
+                <div style="font-size: 13px; opacity: 0.7; margin-bottom: 4px;">🏁 返程接駁</div>
+                <div style="font-weight: 700; font-size: 15px;">送至高鐵左營站</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========== 行程A：美濃 ========== -->
+          <div style="margin-bottom: 48px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+              <div style="background: linear-gradient(135deg, #0f4c81, #2980b9); color: white; font-weight: 800; font-size: 14px; padding: 6px 16px; border-radius: 20px; letter-spacing: 1px;">行程 A</div>
+              <h3 style="margin: 0; font-size: 21px; font-weight: 800; color: var(--primary);">文化之旅：美濃</h3>
+              <span style="font-size: 13px; color: var(--text-muted); font-style: italic;">Cultural Exploration: Meinong</span>
+            </div>
+
+            <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
+
+              <!-- 圖片拼貼：1大+3小 -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 170px 170px; gap: 4px; padding: 4px;">
+                <div style="grid-row: 1 / 3; border-radius: 12px; overflow: hidden;">
+                  <img src="https://www.isu.edu.tw/storage/images/rhaRw8E1JFDR67wGBS3KDZu8RDjvSQv0dDaMRNtt.jpg" alt="美濃風光" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                </div>
+                <div style="border-radius: 12px; overflow: hidden;">
+                  <img src="https://www.isu.edu.tw/storage/images/elQLnVmQcQvyROhsjx0CKMr3tDpnYoqaUdznVaTW.jpg" alt="美濃體驗" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                  <div style="border-radius: 12px; overflow: hidden;">
+                    <img src="https://www.isu.edu.tw/storage/images/5St0GVkISM2vQuSkzFr3ZDUEEw65yD3iQDfc7htn.jpg" alt="美濃景點" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                  </div>
+                  <div style="border-radius: 12px; overflow: hidden;">
+                    <img src="https://www.isu.edu.tw/storage/images/dwNlpqCH9klxLwM8ucMy8L4C7ylKtfOoldtHOvC5.jpg" alt="美濃文化" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 內容區 -->
+              <div style="padding: 28px;">
+                <p style="color: var(--text-light); font-size: 15px; line-height: 1.9; margin: 0 0 20px 0;">
+                  美濃，位於高雄市東北端，是台灣客家文化保存最完整的聚落之一。以油紙傘、粄條、菸樓聞名，充滿濃厚的人文氣息與田園風光。走訪美濃民俗村，體驗搗麻糬、擂茶等傳統客家手作，感受百年傳承的文化魅力。
+                </p>
+
+                <!-- 行程亮點 -->
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;">
+                  <span style="background: #eff6ff; color: #1e40af; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">🎯 搗麻糬體驗</span>
+                  <span style="background: #f0fdf4; color: #166534; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">🍵 客家擂茶</span>
+                  <span style="background: #fefce8; color: #854d0e; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">☂️ 油紙傘手藝</span>
+                  <span style="background: #fdf2f8; color: #9d174d; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">🏘️ 民俗村導覽</span>
+                </div>
+
+                <!-- Timeline 行程 -->
+                <h4 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 700; color: var(--primary);">🕐 行程時間表</h4>
+                <div style="position: relative; padding-left: 28px; border-left: 3px solid #dbeafe;">
+                  <div style="margin-bottom: 20px; position: relative;">
+                    <div style="position: absolute; left: -34px; top: 2px; width: 14px; height: 14px; background: var(--primary); border-radius: 50%; border: 3px solid #dbeafe;"></div>
+                    <div style="font-weight: 700; color: var(--primary); font-size: 14px;">13:00 – 13:30</div>
+                    <div style="color: var(--text-light); font-size: 15px; margin-top: 2px;">🚌 巴士接駁送至美濃民俗村</div>
+                  </div>
+                  <div style="margin-bottom: 20px; position: relative;">
+                    <div style="position: absolute; left: -34px; top: 2px; width: 14px; height: 14px; background: #d97706; border-radius: 50%; border: 3px solid #fef3c7;"></div>
+                    <div style="font-weight: 700; color: #d97706; font-size: 14px;">13:30 – 16:20</div>
+                    <div style="color: var(--text-light); font-size: 15px; margin-top: 2px;">🎊 導覽 ＋ 搗麻糬 ＋ 擂茶／手藝油紙傘體驗</div>
+                  </div>
+                  <div style="position: relative;">
+                    <div style="position: absolute; left: -34px; top: 2px; width: 14px; height: 14px; background: #059669; border-radius: 50%; border: 3px solid #d1fae5;"></div>
+                    <div style="font-weight: 700; color: #059669; font-size: 14px;">16:30 – 17:30</div>
+                    <div style="color: var(--text-light); font-size: 15px; margin-top: 2px;">🚄 搭乘接駁巴士送至高鐵左營站</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========== 行程B：佛光山 ========== -->
+          <div style="margin-bottom: 48px;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+              <div style="background: linear-gradient(135deg, #065f46, #059669); color: white; font-weight: 800; font-size: 14px; padding: 6px 16px; border-radius: 20px; letter-spacing: 1px;">行程 B</div>
+              <h3 style="margin: 0; font-size: 21px; font-weight: 800; color: #065f46;">文化之旅：佛光山</h3>
+              <span style="font-size: 13px; color: var(--text-muted); font-style: italic;">Cultural Exploration: Fo Guang Shan</span>
+            </div>
+
+            <div style="background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.06);">
+
+              <!-- 圖片拼貼：1大+3小 -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 170px 170px; gap: 4px; padding: 4px;">
+                <div style="grid-row: 1 / 3; border-radius: 12px; overflow: hidden;">
+                  <img src="https://www.isu.edu.tw/storage/images/t6n3XMgkiOF3PN2y85vCvUHLmhOARs2qrkuBSWsw.jpg" alt="佛光山佛陀紀念館" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                </div>
+                <div style="border-radius: 12px; overflow: hidden;">
+                  <img src="https://www.isu.edu.tw/storage/images/GXXYDLY8HtoEWoOcBFCC4CtD3eie07g94NO0NY9E.jpg" alt="佛光山園區" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                  <div style="border-radius: 12px; overflow: hidden;">
+                    <img src="https://www.isu.edu.tw/storage/images/LvJvmfMVCoTH6xDMlRcT4bdBVf9qAO6EK1tgc07n.jpg" alt="佛光山景觀" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                  </div>
+                  <div style="border-radius: 12px; overflow: hidden;">
+                    <img src="https://www.isu.edu.tw/storage/images/4xqO7mSVvZkZkuQCXGSfyNbnFqsqrSq1QnlAOj6x.jpg" alt="佛光山文化" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+                  </div>
+                </div>
+              </div>
+
+              <!-- 內容區 -->
+              <div style="padding: 28px;">
+                <p style="color: var(--text-light); font-size: 15px; line-height: 1.9; margin: 0 0 20px 0;">
+                  佛光山，位於高雄市大樹區，是台灣最大的佛教道場之一，由星雲大師於1967年創建。園區內的佛陀紀念館壯麗宏偉，融合傳統與現代建築之美。此行將深入園區導覽、體驗茶禪靜心、抄經祈福，並自由參觀紀念館豐富展區，感受深邃的宗教文化與人文藝術之美。
+                </p>
+
+                <!-- 行程亮點 -->
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px;">
+                  <span style="background: #f0fdf4; color: #166534; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">🏛️ 園區深度導覽</span>
+                  <span style="background: #eff6ff; color: #1e40af; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">🍵 茶禪體驗</span>
+                  <span style="background: #fefce8; color: #854d0e; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">✍️ 抄經祈福</span>
+                  <span style="background: #fdf2f8; color: #9d174d; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;">🖼️ 紀念館展區</span>
+                </div>
+
+                <!-- Timeline 行程 -->
+                <h4 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 700; color: #065f46;">🕐 行程時間表</h4>
+                <div style="position: relative; padding-left: 28px; border-left: 3px solid #d1fae5;">
+                  <div style="margin-bottom: 20px; position: relative;">
+                    <div style="position: absolute; left: -34px; top: 2px; width: 14px; height: 14px; background: #065f46; border-radius: 50%; border: 3px solid #d1fae5;"></div>
+                    <div style="font-weight: 700; color: #065f46; font-size: 14px;">13:00 – 13:30</div>
+                    <div style="color: var(--text-light); font-size: 15px; margin-top: 2px;">🚌 巴士接駁送至佛光山佛陀紀念館</div>
+                  </div>
+                  <div style="margin-bottom: 20px; position: relative;">
+                    <div style="position: absolute; left: -34px; top: 2px; width: 14px; height: 14px; background: #059669; border-radius: 50%; border: 3px solid #d1fae5;"></div>
+                    <div style="font-weight: 700; color: #059669; font-size: 14px;">13:30 – 14:30</div>
+                    <div style="color: var(--text-light); font-size: 15px; margin-top: 2px;">🏛️ 佛光山園區深度導覽</div>
+                  </div>
+                  <div style="margin-bottom: 20px; position: relative;">
+                    <div style="position: absolute; left: -34px; top: 2px; width: 14px; height: 14px; background: #059669; border-radius: 50%; border: 3px solid #d1fae5;"></div>
+                    <div style="font-weight: 700; color: #059669; font-size: 14px;">14:30 – 15:10</div>
+                    <div style="color: var(--text-light); font-size: 15px; margin-top: 2px;">🍵 茶禪體驗</div>
+                  </div>
+                  <div style="margin-bottom: 20px; position: relative;">
+                    <div style="position: absolute; left: -34px; top: 2px; width: 14px; height: 14px; background: #059669; border-radius: 50%; border: 3px solid #d1fae5;"></div>
+                    <div style="font-weight: 700; color: #059669; font-size: 14px;">15:10 – 15:40</div>
+                    <div style="color: var(--text-light); font-size: 15px; margin-top: 2px;">✍️ 抄經祈福</div>
+                  </div>
+                  <div style="margin-bottom: 20px; position: relative;">
+                    <div style="position: absolute; left: -34px; top: 2px; width: 14px; height: 14px; background: #059669; border-radius: 50%; border: 3px solid #d1fae5;"></div>
+                    <div style="font-weight: 700; color: #059669; font-size: 14px;">15:40 – 16:15</div>
+                    <div style="color: var(--text-light); font-size: 15px; margin-top: 2px;">🖼️ 自由參觀紀念館展區</div>
+                  </div>
+                  <div style="position: relative;">
+                    <div style="position: absolute; left: -34px; top: 2px; width: 14px; height: 14px; background: #065f46; border-radius: 50%; border: 3px solid #d1fae5;"></div>
+                    <div style="font-weight: 700; color: #065f46; font-size: 14px;">16:15 – 17:00</div>
+                    <div style="color: var(--text-light); font-size: 15px; margin-top: 2px;">🚄 搭乘接駁巴士送至高鐵左營站</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 注意事項 -->
+          <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 24px;">
+            <h4 style="margin: 0 0 12px 0; color: #92400e; font-size: 16px; font-weight: 700;">⚠️ 參訪注意事項</h4>
+            <ul style="margin: 0; padding-left: 20px; color: #78350f; font-size: 15px; line-height: 2;">
+              <li>參訪活動為自由參加，請於<strong>報名時勾選</strong>是否參加及選擇路線</li>
+              <li>參訪完畢將由接駁巴士統一送至<strong>高鐵左營站</strong></li>
+              <li>請依活動時間準時至指定集合地點，逾時不候</li>
+              <li>活動行程及時間可能依實際狀況微調，以大會最新公告為準</li>
+              <li>如有任何問題，請聯繫大會工作人員</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== VIEW 6: 資料下載 ==================== -->
+    <div id="download-view" class="view-section">
+      <div class="content-container">
+        <div class="form-container-card">
+          <div class="box-title" style="margin-bottom: 25px;">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+            資料下載
+          </div>
+          <p style="color: var(--text-light); margin-bottom: 30px; font-size: 15px; line-height: 1.8;">
+            請下載以下相關表單及會議資料，若有任何問題請聯繫主辦單位。
+          </p>
+
+          <!-- 會議資料 -->
+          <h3 style="font-size: 17px; font-weight: 700; color: #1e293b; margin-bottom: 16px;">📄 會議相關資料</h3>
+          <div style="display: grid; gap: 12px; margin-bottom: 32px;">
+
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; transition: all 0.15s;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="width: 42px; height: 42px; background: linear-gradient(135deg, #dc2626, #ef4444); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px;">PDF</div>
+                <div>
+                  <div style="font-weight: 600; font-size: 14px; color: #1e293b;">會議議程</div>
+                  <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">115學年度公私立大學校院招生研討會議</div>
+                </div>
+              </div>
+              <a href="https://www.isu.edu.tw/storage/files/JMFqumA5LwO1lCsBDfuiIulFv3xwUXp6QIY9DL0P.pdf" target="_blank" style="background: var(--primary); color: white; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap;">下載</a>
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; transition: all 0.15s;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="width: 42px; height: 42px; background: linear-gradient(135deg, #2563eb, #3b82f6); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 12px;">ODT</div>
+                <div>
+                  <div style="font-weight: 600; font-size: 14px; color: #1e293b;">討論提案單</div>
+                  <div style="font-size: 12px; color: #94a3b8; margin-top: 2px;">「115學年度公私立大學校院招生研討會議」討論提案</div>
+                </div>
+              </div>
+              <a href="https://www.isu.edu.tw/storage/files/mQ79I8aV9VNLNMklsam9eGELbNEqJU1ParP5pPOD.odt" target="_blank" style="background: var(--primary); color: white; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; white-space: nowrap;">下載</a>
+            </div>
+
+          </div>
+
+          <!-- 提示 -->
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 20px;">
+            <h4 style="margin: 0 0 8px 0; color: #166534; font-size: 15px;">💡 提示</h4>
+            <p style="margin: 0; color: #15803d; font-size: 14px; line-height: 1.7;">
+              檔案將持續更新，請隨時回來查看是否有新版本。如無法下載，請聯繫大會工作人員。
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== VIEW 7: 報名表單 ==================== -->
+
+    <div id="register-view" class="view-section">
+
+      <div class="content-container">
+
+        <div class="form-container-card">
+
+          <div class="box-title" style="margin-bottom: 25px;">
+
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+
+            出席報名表
+
+          </div>
+
+          <p style="color: var(--text-light); margin-bottom: 30px; font-size: 15px; line-height: 1.6;">
+
+            請填寫個人資料、交通、住宿資訊，以便辦理報到、旅遊平安保險及交通食宿等安排。
+
+          </p>
+
+
+
+          <!-- 步驟指示器 -->
+
+                    <!-- 步驟指示器 -->
+          <div class="steps-indicator" style="justify-content: space-between; gap: 10px; margin-bottom: 35px; position: relative; padding: 0 10px; display: flex;">
+            <div class="step-progress-bar"></div>
+            <div class="step-item active" id="indicator-1" style="flex: 1;">
+              <div class="step-number">1</div>
+              <div class="step-label">基本資料</div>
+            </div>
+            <div class="step-item" id="indicator-2" style="flex: 1;">
+              <div class="step-number">2</div>
+              <div class="step-label">飲食住宿</div>
+            </div>
+            <div class="step-item" id="indicator-3" style="flex: 1;">
+              <div class="step-number">3</div>
+              <div class="step-label">交通接駁</div>
+            </div>
+            <div class="step-item" id="indicator-4" style="flex: 1;">
+              <div class="step-number">4</div>
+              <div class="step-label">參訪行程</div>
+            </div>
+          </div>
+
+
+
+          <form id="registrationForm">
+
+            <!-- STEP 1: 基本資料 -->
+
+            <div class="form-step active" id="step1">
+
+<!-- 區塊 1：與會者身分基本資料 -->
+
+              <div class="form-section-block">
+
+                <!-- 第一列：姓名、性別 -->
+
+                <div class="form-row-half">
+
+                  <div class="form-group">
+
+                    <label for="name">姓名<span class="required">*</span></label>
+
+                    <input type="text" id="name" name="name" required placeholder="請輸入姓名">
+
+                    <div class="error-text" id="name-error">請填寫姓名</div>
+
+                  </div>
+
+                  
+
+                  <div class="form-group">
+
+                    <label>生理性別<span class="required">*</span></label>
+
+                    <div class="choice-group">
+
+                      <div class="choice-card">
+
+                        <input type="radio" id="gender-male" name="gender" value="男" required>
+
+                        <label class="choice-label" for="gender-male">男</label>
+
+                      </div>
+
+                      <div class="choice-card">
+
+                        <input type="radio" id="gender-female" name="gender" value="女" required>
+
+                        <label class="choice-label" for="gender-female">女</label>
+
+                      </div>
+
+                    </div>
+
+                    <div class="error-text" id="gender-error">請選擇生理性別</div>
+
+                  </div>
+
+                </div>
+
+
+
+                <!-- 第二列：身分證字號、出生年月日 -->
+
+                <div class="form-row-half" style="margin-bottom: 0;">
+
+                  <div class="form-group" style="margin-bottom: 0;">
+
+                    <label for="idCard">身分證字號<span class="required">*</span></label>
+
+                    <input type="text" id="idCard" name="idCard" required placeholder="身分證字號" style="text-transform: uppercase;" maxlength="10" minlength="10" pattern="[A-Za-z][12]\d{8}" title="請輸入正確的10碼身分證字號(第一碼英文，第二碼為1或2)">
+
+                    <div class="error-text" id="idCard-error">請填寫正確格式的身分證字號</div>
+
+                    <div class="helper-text">英文請用大寫</div>
+
+                  </div>
+
+
+
+                  <div class="form-group" style="margin-bottom: 0;">
+
+                    <label for="birthDate">出生年月日<span class="required">*</span></label>
+
+                    <input type="date" id="birthDate" name="birthDate" required value="1990-01-01" min="1930-01-01" max="2010-12-31">
+
+                    <div class="error-text" id="birthDate-error">請選擇出生年月日</div>
+
+                    <div class="helper-text"></div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- 區塊 2：服務單位與職稱 -->
+
+              <div class="form-section-block">
+
+                <!-- 第三列：學校機關名稱、服務單位 -->
+
+                <div class="form-row-half">
+
+                  <div class="form-group">
+
+                    <label for="school">學校機關名稱<span class="required">*</span></label>
+
+                    <input type="text" id="school" name="school" required placeholder="請點擊選擇學校/機關" readonly style="cursor: pointer; background-color: #fff;" onclick="openSchoolModal()">
+                    <input type="text" id="school-other" name="school-other" style="display: none; margin-top: 10px;" placeholder="請輸入您的學校/機關全名">
+
+                    <div class="error-text" id="school-error">請填寫學校機關全名</div>
+
+                    <div class="helper-text">請從選單中挑選您的學校或機關</div>
+
+                  </div>
+
+
+
+                  <div class="form-group">
+
+                    <label for="unit">服務單位</label>
+
+                    <input type="text" id="unit" name="unit" placeholder="例如：教務處招生組">
+
+                    <div class="helper-text">格式範例：單位名稱+組別</div>
+
+                  </div>
+
+                </div>
+
+
+
+                <!-- 第四列：職稱、電子郵件 -->
+
+                <div class="form-row-half" style="margin-bottom: 0;">
+
+                  <div class="form-group" style="margin-bottom: 0;">
+
+                    <label for="title">職稱<span class="required">*</span></label>
+
+                    <input type="text" id="title" name="title" required placeholder="例如：教務長、組員">
+
+                    <div class="error-text" id="title-error">請填寫職稱</div>
+
+                  </div>
+
+
+
+                  <div class="form-group" style="margin-bottom: 0;">
+
+                    <label for="email">電子郵件 (Email)<span class="required">*</span></label>
+
+                    <input type="email" id="email" name="email" required placeholder="大會將寄送相關資訊至此信箱">
+
+                    <div class="error-text" id="email-error">請填寫正確格式的電子郵件</div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- 區塊 3：聯絡電話與時數登錄 -->
+
+              <div class="form-section-block">
+
+                <!-- 第五列：行動電話、辦公室電話 -->
+
+                <div class="form-row-half">
+
+                  <div class="form-group">
+
+                    <label for="phone">行動電話<span class="required">*</span></label>
+
+                    <input type="tel" id="phone" name="phone" required placeholder="格式：09XX-XXXXXX" maxlength="11" oninput="formatPhone(this)">
+
+                    <div class="error-text" id="phone-error">請填寫完整 10 碼行動電話</div>
+
+                  </div>
+
+
+
+                  <div class="form-group">
+                    <label for="officePhone">辦公室電話<span class="required">*</span></label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                      <input type="tel" id="officePhone" name="officePhone" required placeholder="例：07-6577711" style="flex:2;">
+                      <span style="color:#64748B; font-weight:600; white-space:nowrap;">分機</span>
+                      <input type="text" id="officeExt" name="officeExt" placeholder="選填" style="flex:1; max-width:100px;">
+                    </div>
+                    <div class="error-text" id="officePhone-error">請填寫辦公室電話</div>
+                  </div>
+
+                </div>
+
+
+
+                <!-- 第六列：是否登錄公務人員時數 -->
+
+                <div class="form-row-half" style="margin-bottom: 0;">
+
+                  <div class="form-group" style="margin-bottom: 0;">
+
+                    <label>是否登錄公務人員時數<span class="required">*</span></label>
+
+                    <div class="choice-group">
+
+                      <div class="choice-card">
+
+                        <input type="radio" id="hours-yes" name="publicServiceHours" value="是" required>
+
+                        <label class="choice-label" for="hours-yes">是</label>
+
+                      </div>
+
+                      <div class="choice-card">
+
+                        <input type="radio" id="hours-no" name="publicServiceHours" value="否" required>
+
+                        <label class="choice-label" for="hours-no">否</label>
+
+                      </div>
+
+                    </div>
+
+                    <div class="error-text" id="publicServiceHours-error">請選擇此項調查</div>
+
+                  </div>
+
+                  <div class="form-group" style="margin-bottom: 0;">
+
+                    <!-- 保持排版對齊的空白區塊 -->
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <!-- 區塊 4：寄送地址與緊急聯絡 -->
+
+              <div class="form-section-block" style="margin-bottom: 0;">
+
+                <!-- 第七列：學校地址 (單欄全寬) -->
+
+                <div class="form-group" id="address-group">
+                  <label>學校地址 (會後寄送會議紀錄用)</label>
+                  
+                  <!-- 第一列：縣市、區域、郵遞區號 -->
+                  <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                    <select id="addr-city" style="flex: 1; min-width: 120px; padding: 12px 15px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 16px; transition: all 0.2s; background-color: #fff;" onchange="updateDistricts()">
+                      <option value="" disabled selected>選擇縣市</option>
+                    </select>
+                    
+                    <select id="addr-district" style="flex: 1; min-width: 120px; padding: 12px 15px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 16px; transition: all 0.2s; background-color: #fff;" onchange="updateZipCode()" disabled>
+                      <option value="" disabled selected>選擇區域</option>
+                    </select>
+                    
+                    <input type="text" id="addr-zip" placeholder="3+3碼" maxlength="7" style="width: 100px; padding: 12px 10px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 16px; background-color: #fff; color: #0F4C81; text-align: center; font-weight: 600;" oninput="syncAddress()">
+                  </div>
+
+                  <!-- 第二列：路名、巷弄、號樓 -->
+                  <div style="display: flex; gap: 10px; margin-bottom: 5px; flex-wrap: wrap;">
+                    <input type="text" id="addr-road" placeholder="路/街名 (例: 學城路一段)" style="flex: 2; min-width: 150px; padding: 12px 15px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 16px; transition: all 0.2s;" oninput="syncAddress()">
+                    <input type="text" id="addr-alley" placeholder="巷/弄" style="flex: 1; min-width: 80px; padding: 12px 15px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 16px; transition: all 0.2s;" oninput="syncAddress()">
+                    <input type="text" id="addr-number" placeholder="號/樓/建築物" style="flex: 2; min-width: 120px; padding: 12px 15px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 16px; transition: all 0.2s;" oninput="syncAddress()">
+                  </div>
+                  <!-- 第三列：單位/處室 -->
+                  <div style="display: flex; gap: 10px; margin-bottom: 5px;">
+                    <input type="text" id="addr-dept" placeholder="單位/處室 (例: 教務處招生組收)" style="flex: 1; padding: 12px 15px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 16px; transition: all 0.2s;" oninput="syncAddress()">
+                  </div>
+                  
+                  <div class="helper-text">系統將自動帶入貴校地址，請確認地址資訊。</div>
+                  
+                  <!-- 隱藏欄位供表單送出 -->
+                  <input type="hidden" id="address" name="address" required>
+                </div>
+
+
+
+                <!-- 第八列：緊急聯絡人姓名、緊急聯絡人電話 -->
+
+                <div class="form-row-half" style="margin-bottom: 0;">
+
+                  <div class="form-group" style="margin-bottom: 0;">
+
+                    <label for="emergencyContact">緊急聯絡人姓名</label>
+
+                    <input type="text" id="emergencyContact" name="emergencyContact" placeholder="緊急聯絡人姓名">
+
+                  </div>
+
+
+
+                  <div class="form-group" style="margin-bottom: 0;">
+
+                    <label for="emergencyPhone">緊急聯絡人電話</label>
+
+                    <input type="tel" id="emergencyPhone" name="emergencyPhone" placeholder="格式：09XX-XXXXXX" maxlength="11" oninput="formatPhone(this)">
+                    <div class="error-text" id="emergencyPhone-error">請填寫完整 10 碼電話號碼</div>
+                  </div>
+
+                </div>
+
+              </div>
+
+
+
+              <div class="btn-group">
+
+                <div></div> 
+
+                <button type="button" class="btn btn-primary" style="max-width: 260px;" onclick="goToNextStep()">下一步 (飲食住宿) ➔</button>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- STEP 2: 交通食宿與參訪調查 -->
+
+            
+            <!-- STEP 2: 交通接駁 -->
+            <div class="form-step" id="step2" style="display: none;">
+              <div class="section-title">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M2 17h2v-2H2v2zm0 4h2v-2H2v2zm0-8h2v-2H2v2zm4 8h16v-2H6v2zm0-4h16v-2H6v2zm0-8v2h16V9H6zm-4 0h2V7H2v2z"/></svg>
+                飲食與住宿
+              </div>
+              <div class="form-section-block">
+<!-- 飲食習慣 -->
+
+              <div class="form-group">
+
+                <label>飲食習慣<span class="required">*</span></label>
+
+                <div class="choice-group">
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="diet-meat" name="diet" value="葷" required>
+
+                    <label class="choice-label" for="diet-meat">葷</label>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="diet-veg" name="diet" value="素" required>
+
+                    <label class="choice-label" for="diet-veg">素</label>
+
+                  </div>
+
+                </div>
+
+                <div class="error-text" id="diet-error">請選擇飲食習慣</div>
+
+              </div>
+
+
+
+              
+<!-- 用餐需求 (複選) -->
+
+              <div class="form-group">
+
+                <label>用餐需求 (可複選)<span class="required">*</span></label>
+
+                <div class="vertical-choice-list">
+
+                  <div class="choice-card">
+
+                    <input type="checkbox" id="meal-d1-lunch" name="meals" value="8月25日(第一天)午餐(餐盒)" class="meal-option">
+
+                    <label class="choice-label" for="meal-d1-lunch">8月25日 (第一天) 午餐 (餐盒)</label>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="checkbox" id="meal-d1-dinner" name="meals" value="8月25日(第一天)晚宴(桌菜)" class="meal-option">
+
+                    <label class="choice-label" for="meal-d1-dinner">8月25日 (第一天) 晚宴 (義大皇家酒店桌菜)</label>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="checkbox" id="meal-d2-lunch" name="meals" value="8月26日(第二天)午餐(餐盒)" class="meal-option">
+
+                    <label class="choice-label" for="meal-d2-lunch">8月26日 (第二天) 午餐 (餐盒)</label>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="checkbox" id="meal-none" name="meals" value="不用餐" class="meal-none-option">
+
+                    <label class="choice-label" for="meal-none">不用餐 (勾選後將自動取消其他用餐項目)</label>
+
+                  </div>
+
+                </div>
+
+                <div class="error-text" id="meals-error">請選擇用餐需求</div>
+
+              </div>
+
+
+
+              
+<!-- 8月25日 住宿安排 -->
+
+              <div class="form-group">
+
+                <label>8月25日 (第一天) 住宿安排<span class="required">*</span></label>
+
+                <div style="font-size: 12.5px; color: var(--text-light); margin-bottom: 10px; line-height: 1.6; background-color: #F9FAFB; padding: 10px 14px; border-left: 3px solid var(--primary); border-radius: 0 6px 6px 0;">
+
+                  ＊住宿地點由主辦單位安排為義大皇家酒店。房型及大會合約價請參照「住宿資訊」頁面說明。<br>
+
+                  ＊適逢暑假期間，房間量有限。若雙人房房間出現不足時，將依據報名順序協調改為單人房入住。
+
+                </div>
+
+                <div class="vertical-choice-list">
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="stay-no" name="stay" value="不住宿" required onclick="toggleLodgingPanel(false)">
+
+                    <label class="choice-label" for="stay-no">不住宿</label>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="stay-yes" name="stay" value="住宿" required onclick="toggleLodgingPanel(true)">
+
+                    <label class="choice-label" for="stay-yes">住宿 (義大皇家酒店，由主辦單位統計房型並登錄安排)</label>
+
+                  </div>
+
+
+
+                  <!-- 住宿額外資訊區塊 -->
+
+                  <div class="conditional-panel" id="lodging-panel">
+
+                    <div class="form-group">
+
+                      <label for="invoice">發票抬頭與統一編號 (公務核銷發票用)<span class="required">*</span></label>
+
+                      <input type="text" id="invoice" placeholder="例如：義守大學 07927743">
+
+                      <div class="error-text" id="invoice-error">請填寫發票抬頭與統一編號</div>
+
+                    </div>
+
+
+
+                    <div class="form-group" style="margin-bottom: 0;">
+
+                      <label>請選擇入住房型：<span class="required">*</span></label>
+
+                      <div class="vertical-choice-list" style="margin-top: 8px;">
+
+                        <div class="choice-card">
+
+                          <input type="radio" id="room-single" name="roomType" value="單人房(山景客房) $3500/間(含1餐)" onclick="toggleRoommate(false)">
+
+                          <label class="choice-label" for="room-single" style="font-size: 13.5px;">單人房 (山景客房，一大床) - $3,500/間 (含 1 客早餐)</label>
+
+                        </div>
+
+                        
+
+                        <div class="choice-card">
+
+                          <input type="radio" id="room-double" name="roomType" value="雙人房(雅致家庭房，兩中床) $4000/間(含2餐)" onclick="toggleRoommate(true)">
+
+                          <label class="choice-label" for="room-double" style="font-size: 13.5px;">雙人房 (雅致家庭房，兩中床) - $4,000/間 (含 2 客早餐)</label>
+
+                        </div>
+
+
+
+                        <!-- 雙人房同房者資訊 -->
+
+                        <div class="conditional-panel" id="roommate-panel" style="background: white; border: 1px solid #E5E7EB;">
+
+                          <p style="font-size:15px; font-weight: 600; color: var(--primary); margin-bottom:15px; line-height: 1.6;">避免重複訂房，請於下方欄位填寫同房者學校全稱及同房者姓名</p>
+
+                          <div class="form-row-half">
+
+                            <div class="form-group" style="margin-bottom: 0;">
+
+                              <label for="roommate-school">同房者學校全稱<span class="required">*</span></label>
+                              <input type="text" id="roommate-school" placeholder="請點擊選擇學校/機關" readonly style="padding: 12px 15px; font-size: 16px; cursor: pointer; background: #f8fafc;" onclick="openSchoolModal('roommate-school')">
+                              <div class="error-text" id="roommate-school-error">請輸入同房者學校</div>
+
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+
+                              <label for="roommate-name">同房者姓名<span class="required">*</span></label>
+
+                              <input type="text" id="roommate-name" placeholder="例如：林大同" style="padding: 12px 15px; font-size: 16px;">
+
+                              <div class="error-text" id="roommate-name-error">請輸入同房者姓名</div>
+
+                            </div>
+
+                          </div>
+
+                        </div>
+
+
+
+                        <div class="choice-card">
+
+                          <input type="radio" id="room-double-auto" name="roomType" value="雙人房(由大會安排)" onclick="toggleRoommate(false)">
+
+                          <label class="choice-label" for="room-double-auto" style="font-size: 13.5px;">雙人房 (雅致家庭房) - 尚無同房者，由大會安排</label>
+
+                        </div>
+
+                      </div>
+
+                      <div class="error-text" id="roomType-error">請選擇入住房型</div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <div class="error-text" id="stay-error">請選擇住宿安排</div>
+
+              </div>
+
+
+
+              
+              </div>
+              <div class="btn-group">
+                <button type="button" class="btn btn-secondary" style="max-width: 140px;" onclick="goToStep(1)">🡐 上一步</button>
+                <button type="button" class="btn btn-primary" style="max-width: 260px;" onclick="goToStep(3)">下一步 (交通接駁) ➔</button>
+              </div>
+            </div>
+
+            <!-- STEP 4: 參訪行程 -->
+            <div class="form-step" id="step3" style="display: none;">
+              <div class="section-title">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M2 17h2v-2H2v2zm0 4h2v-2H2v2zm0-8h2v-2H2v2zm4 8h16v-2H6v2zm0-4h16v-2H6v2zm0-8v2h16V9H6zm-4 0h2V7H2v2z"/></svg>
+                交通接駁 (抵達會場)
+              </div>
+              <div class="form-section-block">
+<!-- 8月25日 抵達會場交通方式 -->
+
+              <div class="form-group">
+
+                <label>8月25日 (第一天) 抵達會場交通方式<span class="required">*</span></label>
+
+                <div class="vertical-choice-list">
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="d1-traffic-car" name="day1Traffic" value="自行開車" required onclick="toggleCarPlate(1, true)">
+
+                    <label class="choice-label" for="d1-traffic-car">自行開車</label>
+
+                  </div>
+
+                  <!-- 車牌輸入 -->
+
+                  <div class="conditional-panel" id="d1-car-panel">
+
+                    <label for="d1-car-plate" style="font-size: 13.5px;">自行開車車牌號碼 (通行登記用)<span class="required">*</span></label>
+
+                    <input type="text" id="d1-car-plate" placeholder="例如：ABC-1234">
+
+                    <div class="error-text" id="d1-car-plate-error">請填寫車牌號碼</div>
+
+                  </div>
+
+
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="d1-traffic-shuttle" name="day1Traffic" value="搭乘高鐵站接駁車至會場" required onclick="toggleCarPlate(1, false)">
+
+                    <label class="choice-label" for="d1-traffic-shuttle">搭乘高鐵站接駁車至會場 (高鐵左營站 11:20 準時發車)</label>
+
+                  </div>
+
+                </div>
+
+                <div class="error-text" id="day1Traffic-error">請選擇第一天抵達交通方式</div>
+
+              </div>
+
+
+
+              
+<!-- 8月26日 抵達會場交通方式 -->
+
+              <div class="form-group">
+
+                <label>8月26日 (第二天) 抵達會場交通方式<span class="required">*</span></label>
+
+                <!-- 顯示給住宿者的訊息 -->
+                <div id="d2-traffic-stay-msg" style="display: none; background: #e0f2fe; border: 1px solid #bae6fd; padding: 15px; border-radius: 8px; color: #0369a1; font-size: 15px; margin-bottom: 10px;">
+                  您已在上一步勾選「住宿」，住宿者可搭乘接駁專車 (8:50 飯店大廳發車) 或自行前往會場。此項目免填。
+                </div>
+
+                <div id="d2-traffic-choices-container" class="vertical-choice-list">
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="d2-traffic-car" name="day2Traffic" value="自行開車" onclick="toggleCarPlate(2, true)">
+
+                    <label class="choice-label" for="d2-traffic-car">自行開車</label>
+
+                  </div>
+
+                  <!-- 車牌輸入 -->
+
+                  <div class="conditional-panel" id="d2-car-panel">
+
+                    <label for="d2-car-plate" style="font-size: 13.5px;">自行開車車牌號碼 (通行登記用)<span class="required">*</span></label>
+
+                    <input type="text" id="d2-car-plate" placeholder="例如：ABC-1234">
+
+                    <div class="error-text" id="d2-car-plate-error">請填寫車牌號碼</div>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="d2-traffic-shuttle" name="day2Traffic" value="搭乘高鐵接駁車至會場" onclick="toggleCarPlate(2, false)">
+
+                    <label class="choice-label" for="d2-traffic-shuttle">搭乘高鐵站接駁車至會場 (高鐵左營站 8:30 準時發車)</label>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="d2-traffic-hotel" name="day2Traffic" value="搭乘義大皇家酒店接駁車至會場" onclick="toggleCarPlate(2, false)">
+
+                    <label class="choice-label" for="d2-traffic-hotel">搭乘義大皇家酒店接駁車至會場 (飯店大廳 8:50 發車)</label>
+
+                  </div>
+
+                </div>
+
+                <div class="error-text" id="day2Traffic-error">請選擇第二天抵達交通方式</div>
+
+              </div>
+
+
+
+              
+              </div>
+              <div class="btn-group">
+                <button type="button" class="btn btn-secondary" style="max-width: 140px;" onclick="goToStep(2)">🡐 上一步</button>
+                <button type="button" class="btn btn-primary" style="max-width: 260px;" onclick="goToStep(4)">下一步 (參訪行程) ➔</button>
+              </div>
+            </div>
+
+            <!-- STEP 3: 飲食與住宿 -->
+            <div class="form-step" id="step4" style="display: none;">
+              <div class="section-title">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M2 17h2v-2H2v2zm0 4h2v-2H2v2zm0-8h2v-2H2v2zm4 8h16v-2H6v2zm0-4h16v-2H6v2zm0-8v2h16V9H6zm-4 0h2V7H2v2z"/></svg>
+                參訪行程與賦歸
+              </div>
+              <div class="form-section-block">
+<!-- 8月25日 會議結束後安排 -->
+
+              
+              <!-- 自動偵測晚宴提示 -->
+              <div id="dinner-auto-note" style="display: none; background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 20px;">✅</span>
+                  <div>
+                    <div style="font-weight: 600; color: #1E40AF; font-size: 15px;">您已在上一步勾選「晚宴」用餐</div>
+                    <div style="color: #3B82F6; font-size: 13.5px; margin-top: 2px;">參與晚宴者可搭乘接駁專車或自行前往義大皇家酒店，晚宴結束後未安排住宿者，請自行安排返程交通。</div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="day1After-group">
+<div class="form-group">
+
+                <label id="day1After-label">8月25日 (第一天) 會議結束後安排<span class="required">*</span></label>
+
+                <div class="vertical-choice-list">
+
+                  <div class="choice-card" id="dinner-choice-card">
+
+                    <input type="radio" id="d1-after-dinner" name="day1After" value="參與晚宴(參與晚宴者可搭乘接駁專車或自行前往義大皇家酒店，晚宴結束後未安排住宿者，請自行安排返程交通)" required>
+
+                    <label class="choice-label" for="d1-after-dinner">參與晚宴 (搭乘接駁車或自行開車前往義大皇家酒店)</label>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="d1-after-shuttle" name="day1After" value="不參與晚宴，搭接駁車至高鐵左營站" required>
+
+                    <label class="choice-label" for="d1-after-shuttle">不參與晚宴（搭乘接駁車前往高鐵左營站，18:10發車）</label>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="d1-after-self" name="day1After" value="不參與晚宴，交通自理" required>
+
+                    <label class="choice-label" for="d1-after-self">不參與晚宴（交通自理，未住宿大會者請自行安排返程）</label>
+
+                  </div>
+
+                </div>
+
+                <div class="error-text" id="day1After-error">請選擇會議結束後安排</div>
+
+              </div>
+              </div>
+
+
+
+              
+<!-- 8月26日 會議結束離校與參訪調查 -->
+
+              <div class="form-group">
+
+                <label>8月26日 (第二天) 參訪意願及賦歸交通工具調查<span class="required">*</span></label>
+
+                <div style="font-size: 12.5px; color: var(--text-light); margin-bottom: 10px; line-height: 1.6; background-color: #F9FAFB; padding: 10px 14px; border-left: 3px solid var(--primary); border-radius: 0 6px 6px 0;">
+
+                  1. 本次參訪行程分兩路線，各路線 20 人以上成團。其中，「參訪路線 A－美濃文化之旅」開放報名名額最多 40 人。參訪行程時程表請參閱「會議首頁」或點選下方路線展開。<br>
+
+                  2. 參訪活動不接受自行前往，如欲成功參加請擇一勾選「參訪路線A美濃」或「參訪路線B佛光山」。<br>
+
+                  3. 各參訪時間僅供參考，實際安排將依當日交通狀況及現場活動進行情形彈性調整。
+
+                </div>
+
+                <div class="vertical-choice-list">
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="dep-self" name="departure" value="賦歸 (交通自理)" required onclick="toggleTourPanel('none')">
+
+                    <label class="choice-label" for="dep-self">賦歸 (交通自理)</label>
+
+                  </div>
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="dep-shuttle" name="departure" value="賦歸 (搭接駁車至左營高鐵站，12:30發車)" required onclick="toggleTourPanel('none')">
+
+                    <label class="choice-label" for="dep-shuttle">賦歸 (搭乘接駁車至高鐵左營站，12:30 發車）</label>
+
+                  </div>
+
+                  <div class="choice-card" id="tour-a-card">
+
+                    <input type="radio" id="dep-tour-a" name="departure" value="參訪路線A美濃(原車往高鐵)" required onclick="toggleTourPanel('A')">
+
+                    <label class="choice-label" for="dep-tour-a">
+
+                      <div style="text-align: left;">
+
+                        <strong>參訪路線A：美濃文化之旅</strong>
+                        <span id="tour-a-quota-badge" style="display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; background: #dbeafe; color: #1e40af;">名額查詢中...</span>
+                        <br>
+
+                        <span style="font-size: 14px; color: var(--text-light); font-weight: normal;">(參訪完畢原車送至高鐵左營站，點選此項顯示詳細行程表)</span>
+
+                      </div>
+
+                    </label>
+
+                  </div>
+
+                  
+
+                  <!-- 路線A詳細行程面板 -->
+
+                  <div class="conditional-panel" id="tour-a-panel">
+
+                    <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--primary); display: flex; align-items: center; gap: 4px;">
+
+                      📋 參訪路線 A 詳細行程 (美濃)
+
+                    </h4>
+
+                    <table style="width: 100%; border-collapse: collapse; font-size: 15px; background: white; border-radius: 6px; overflow: hidden; border: 1px solid #E5E7EB;">
+
+                      <thead>
+
+                        <tr style="background: var(--primary-light); color: var(--primary);">
+
+                          <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #E5E7EB; width: 160px; white-space: nowrap;">時間</th>
+
+                          <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #E5E7EB;">活動行程</th>
+
+                        </tr>
+
+                      </thead>
+
+                      <tbody>
+
+                        <tr>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6; font-weight: bold; color: #111827;">13:00 – 13:30</td>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6;">巴士接駁送至美濃民俗村</td>
+
+                        </tr>
+
+                        <tr>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6; font-weight: bold; color: #111827;">13:30 – 16:20</td>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6;">導覽 + 搗麻糬 + 擂茶／手藝油紙傘體驗</td>
+
+                        </tr>
+
+                        <tr>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6; font-weight: bold; color: #111827;">16:30 – 17:30</td>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6;">搭乘接駁巴士送至高鐵左營站</td>
+
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+
+                  </div>
+
+
+
+                  <div class="choice-card">
+
+                    <input type="radio" id="dep-tour-b" name="departure" value="參訪路線B佛光山(原車往高鐵)" required onclick="toggleTourPanel('B')">
+
+                    <label class="choice-label" for="dep-tour-b">
+
+                      <div style="text-align: left;">
+
+                        <strong>參訪路線B：佛光山佛陀紀念館</strong><br>
+
+                        <span style="font-size: 14px; color: var(--text-light); font-weight: normal;">(參訪完畢原車送至高鐵左營站，點選此項顯示詳細行程表)</span>
+
+                      </div>
+
+                    </label>
+
+                  </div>
+
+
+
+                  <!-- 路線B詳細行程面板 -->
+
+                  <div class="conditional-panel" id="tour-b-panel">
+
+                    <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 10px; color: var(--primary); display: flex; align-items: center; gap: 4px;">
+
+                      📋 參訪路線 B 詳細行程 (佛光山)
+
+                    </h4>
+
+                    <table style="width: 100%; border-collapse: collapse; font-size: 15px; background: white; border-radius: 6px; overflow: hidden; border: 1px solid #E5E7EB;">
+
+                      <thead>
+
+                        <tr style="background: var(--primary-light); color: var(--primary);">
+
+                          <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #E5E7EB; width: 160px; white-space: nowrap;">時間</th>
+
+                          <th style="padding: 12px 15px; text-align: left; border-bottom: 1px solid #E5E7EB;">活動行程</th>
+
+                        </tr>
+
+                      </thead>
+
+                      <tbody>
+
+                        <tr>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6; font-weight: bold; color: #111827;">13:00 – 13:30</td>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6;">巴士接駁送至佛光山佛陀紀念館</td>
+
+                        </tr>
+
+                        <tr>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6; font-weight: bold; color: #111827;">13:30 – 14:30</td>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6;">佛光山園區深度導覽</td>
+
+                        </tr>
+
+                        <tr>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6; font-weight: bold; color: #111827;">14:30 – 15:10</td>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6;">茶禪體驗</td>
+
+                        </tr>
+
+                        <tr>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6; font-weight: bold; color: #111827;">15:10 – 15:40</td>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6;">抄經祈福</td>
+
+                        </tr>
+
+                        <tr>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6; font-weight: bold; color: #111827;">15:40 – 16:15</td>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6;">自由參觀紀念館展區</td>
+
+                        </tr>
+
+                        <tr>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6; font-weight: bold; color: #111827;">16:15 – 17:00</td>
+
+                          <td style="padding: 12px 15px; border-bottom: 1px solid #F3F4F6;">搭乘接駁巴士送至高鐵左營站</td>
+
+                        </tr>
+
+                      </tbody>
+
+                    </table>
+
+                  </div>
+
+                </div>
+
+                <div class="error-text" id="departure-error">請選擇此項行程調查</div>
+              </div>
+              </div>
+              <div class="btn-group">
+                <button type="button" class="btn btn-secondary" style="max-width: 140px;" onclick="goToStep(3)">🡐 上一步</button>
+                <button type="button" class="btn btn-primary" style="max-width: 260px;" onclick="showPreview()">預覽報名資料 ➔</button>
+              </div>
+            </div>
+
+          
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+
+
+
+    <!-- ==================== VIEW 5.5: 預覽確認資料 ==================== -->
+    <div id="preview-view" class="view-section" style="display: none;">
+      <div class="content-container">
+        <div class="form-container-card">
+          <div class="box-title" style="margin-bottom: 25px;">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4A4 4 0 0 1 16 8A4 4 0 0 1 12 12A4 4 0 0 1 8 8A4 4 0 0 1 12 4M12 14C16.42 14 20 15.79 20 18V20H4V18C4 15.79 7.58 14 12 14Z"/></svg>
+            確認報名資料
+          </div>
+          <p style="color: var(--text-light); margin-bottom: 30px; font-size: 15px; line-height: 1.6;">
+            請確認以下報名資料是否正確，若需修改請點選「返回修改」，確認無誤後請點選「確認送出」。
+          </p>
+          <div class="success-details" id="preview-details" style="margin-bottom: 30px; border-radius: 8px; border: 1px solid #E2E8F0; background-color: #F8FAFC;">
+            <!-- details will be injected here -->
+          </div>
+          <div class="btn-group" style="justify-content: center; gap: 20px;">
+            <button type="button" class="btn btn-secondary" style="max-width: 140px;" onclick="hidePreview()">🡐 返回修改</button>
+            <button type="button" class="btn btn-primary" style="max-width: 260px;" onclick="submitRegistrationForm()">確認送出 ➔</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <!-- 提交中狀態區塊 -->
+
+        <div class="loader-container" id="loadingState">
+
+          <div class="loader"></div>
+
+          <p style="font-size: 16px; font-weight: 500; color: var(--primary);">正在提交您的報名資料...</p>
+
+          <p style="font-size: 13px; color: var(--text-light); margin-top: 5px;">這大約需要幾秒鐘的時間，請勿關閉網頁或重整</p>
+
+        </div>
+
+
+
+        <!-- 報名成功憑證區塊 -->
+
+        <div id="success-view" class="form-container-card">
+
+          <div class="success-icon">✓</div>
+
+          <h2 style="color: var(--success); font-weight: 700; margin-bottom: 6px; text-align: center;">報名提交成功！</h2>
+
+          <p style="font-size: 14px; color: var(--text-light); margin-bottom: 25px; text-align: center;">
+
+            大會已收到您的報名資料，電子報到憑證已發送至您的 Email 電子郵件信箱。
+
+          </p>
+
+
+
+          <div class="success-details">
+
+            <h3>與會者報名確認憑證</h3>
+
+            <p><strong>與會嘉賓：</strong><span id="res-name"></span></p>
+
+            <p><strong>學校機關：</strong><span id="res-school"></span></p>
+
+            <p><strong>服務單位：</strong><span id="res-unit"></span></p>
+
+            <p><strong>職務名稱：</strong><span id="res-title"></span></p>
+
+            <p><strong>報到序號：</strong><span id="res-uid" style="font-family: monospace; font-weight: bold; color: var(--primary); font-size: 15px;"></span></p>
+
+          </div>
+
+
+
+          <div class="barcode-section">
+
+            <div class="barcode-card">
+
+              <h4>手機相機專用憑證 (QR Code)</h4>
+
+              <img id="qrImage" src="" alt="QR Code">
+
+            </div>
+
+            
+
+          </div>
+
+
+
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 25px; line-height: 1.4; text-align: center;">
+
+            研討會當天請直接以手機出示上述條碼，現場工作人員會為您完成快速報到。
+
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+  </div>
+
+
+
+  <script>
+
+    // ==========================================
+
+    // ⚠️ 請在下方雙引號中，貼上您 Google Apps Script 的「部署網址」!
+
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbywpKJ91JW-HCjQ_cwL-HaoqdE08h_9JuXXqR-rxJsIwJyTWcH_o8vSVn9kBFDN9U8s/exec";
+
+    // ==========================================
+
+
+
+    // --- 5分頁切換邏輯 ---
+
+    function switchView(viewName) {
+      const views = ['home', 'agenda', 'traffic', 'lodging', 'visit', 'download', 'register'];
+      views.forEach(v => {
+        const viewEl = document.getElementById(`${v}-view`);
+        const navEl = document.getElementById(`nav-${v}`);
+        if (viewEl) viewEl.classList.remove('active');
+        if (navEl) navEl.classList.remove('active');
+      });
+
+      const activeView = document.getElementById(`${viewName}-view`);
+      const activeNav = document.getElementById(`nav-${viewName}`);
+      if (activeView) activeView.classList.add('active');
+      if (activeNav) activeNav.classList.add('active');
+
+      // 記住目前頁面，F5 重新整理後不會跳回首頁
+      history.replaceState(null, '', '#' + viewName);
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // F5 重新整理時，自動跳回上次停留的頁面
+    window.addEventListener('DOMContentLoaded', function() {
+      var hash = window.location.hash.replace('#', '');
+      var validViews = ['home', 'agenda', 'traffic', 'lodging', 'visit', 'download', 'register'];
+      if (hash && validViews.indexOf(hash) !== -1) {
+        switchView(hash);
+      }
+      // 查詢美濃名額
+      checkTourAQuota();
+    });
+
+    // === 美濃名額限制 (最多40人) ===
+    var TOUR_A_MAX = 40;
+    var tourACount = null; // 目前已報名人數
+
+    function checkTourAQuota() {
+      var badge = document.getElementById('tour-a-quota-badge');
+      if (!badge) return;
+      badge.textContent = '名額查詢中...';
+      badge.style.background = '#dbeafe';
+      badge.style.color = '#1e40af';
+
+      // 透過 GAS 查詢目前已報名美濃的人數
+      var cbName = 'onTourAQuotaResult';
+      window[cbName] = function(response) {
+        if (response && typeof response.tourACount === 'number') {
+          tourACount = response.tourACount;
+        } else {
+          tourACount = 0;
+        }
+        updateTourABadge();
+        // 清除 script tag
+        var s = document.getElementById('quota-script');
+        if (s) s.parentNode.removeChild(s);
+      };
+
+      var url = GAS_WEB_APP_URL + '?callback=' + cbName + '&action=getTourACount';
+      var script = document.createElement('script');
+      script.id = 'quota-script';
+      script.src = url;
+      script.onerror = function() {
+        badge.textContent = '限額 40 人';
+        badge.style.background = '#fef3c7';
+        badge.style.color = '#92400e';
+      };
+      document.body.appendChild(script);
+    }
+
+    function updateTourABadge() {
+      var badge = document.getElementById('tour-a-quota-badge');
+      var radio = document.getElementById('dep-tour-a');
+      var card = document.getElementById('tour-a-card');
+      if (!badge) return;
+
+      var remaining = TOUR_A_MAX - (tourACount || 0);
+      if (remaining < 0) remaining = 0;
+
+      if (remaining <= 0) {
+        // 已額滿
+        badge.textContent = '⛔ 已額滿';
+        badge.style.background = '#fee2e2';
+        badge.style.color = '#dc2626';
+        if (radio) { radio.disabled = true; }
+        if (card) { card.style.opacity = '0.5'; card.style.cursor = 'not-allowed'; }
+      } else if (remaining <= 10) {
+        // 名額緊張
+        badge.textContent = '🔥 提供40個名額，剩餘 ' + remaining + ' 個名額';
+        badge.style.background = '#fef3c7';
+        badge.style.color = '#92400e';
+      } else {
+        // 尚有名額
+        badge.textContent = '提供40個名額，剩餘 ' + remaining + ' 個名額';
+        badge.style.background = '#dcfce7';
+        badge.style.color = '#166534';
+      }
+    }
+
+
+
+    // --- 報名表步驟流程控制 ---
+
+    let currentStep = 1;
+
+
+
+    function updateProgressBar() {
+
+      const progressBar = document.getElementById('progressBar');
+
+      const step2 = document.getElementById('stepIndicator2');
+
+      if (currentStep === 1) {
+
+        progressBar.style.width = '0%';
+
+        step2.classList.remove('active', 'completed');
+
+        document.getElementById('stepIndicator1').classList.add('active');
+
+        document.getElementById('stepIndicator1').classList.remove('completed');
+
+      } else {
+
+        progressBar.style.width = '100%';
+
+        document.getElementById('stepIndicator1').classList.add('completed');
+
+        document.getElementById('stepIndicator1').classList.remove('active');
+
+        step2.classList.add('active');
+
+      }
+
+    }
+
+
+
+    function goToNextStep() {
+      if (!validateStep1()) return;
+      goToStep(2);
+    }
+    function goToPrevStep() {
+      goToStep(1);
+    }
+    
+        function goToStep(step) {
+      if(step === 2) {
+        if (!validateStep1()) return;
+      }
+      if(step === 3) {
+        if (!validateStep2_actual()) return;
+      }
+      if(step === 4) {
+        if (!validateStep3_actual()) return;
+      }
+      
+      document.querySelectorAll('.form-step').forEach(el => el.style.display = 'none');
+      document.getElementById('step' + step).style.display = 'block';
+      
+      document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+      document.getElementById('indicator-' + step).classList.add('active');
+      
+      // 智慧連動：晚宴勾選狀態與第四關「會議結束後安排」連動
+      if (step === 4) {
+        const dinnerChecked = document.getElementById('meal-d1-dinner').checked;
+        const day1AfterGroup = document.getElementById('day1After-group');
+        const dinnerAutoNote = document.getElementById('dinner-auto-note');
+        const dinnerChoiceCard = document.getElementById('dinner-choice-card');
+        const day1AfterLabel = document.getElementById('day1After-label');
+        
+        if (dinnerChecked) {
+          // 勾了晚宴 → 自動選「參與晚宴」，隱藏整個問題
+          document.getElementById('d1-after-dinner').checked = true;
+          if (day1AfterGroup) day1AfterGroup.style.display = 'none';
+          if (dinnerAutoNote) dinnerAutoNote.style.display = 'block';
+        } else {
+          // 沒勾晚宴 → 隱藏「參與晚宴」選項，只顯示兩個不參加的交通選項
+          document.getElementById('d1-after-dinner').checked = false;
+          if (day1AfterGroup) day1AfterGroup.style.display = 'block';
+          if (dinnerAutoNote) dinnerAutoNote.style.display = 'none';
+          if (dinnerChoiceCard) dinnerChoiceCard.style.display = 'none';
+          if (day1AfterLabel) day1AfterLabel.innerHTML = '8月25日 (第一天) 會議結束後交通安排<span class="required">*</span>';
+        }
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function toggleCarPlate(day, show) {
+      const panel = document.getElementById(`d${day}-car-panel`);
+      const input = document.getElementById(`d${day}-car-plate`);
+      if (show) {
+        panel.classList.add('show');
+      } else {
+        panel.classList.remove('show');
+        input.value = ''; 
+        input.classList.remove('error-border');
+        document.getElementById(`d${day}-car-plate-error`).style.display = 'none';
+      }
+    }
+
+    // --- 住宿動態展開邏輯 ---
+    function toggleLodgingPanel(show) {
+      const panel = document.getElementById('lodging-panel');
+      const invoice = document.getElementById('invoice');
+      const rooms = document.getElementsByName('roomType');
+      
+      const d2TrafficContainer = document.getElementById('d2-traffic-choices-container');
+      const d2TrafficMsg = document.getElementById('d2-traffic-stay-msg');
+      
+      if (show) {
+        panel.classList.add('show');
+        if (d2TrafficContainer) d2TrafficContainer.style.display = 'none';
+        if (d2TrafficMsg) d2TrafficMsg.style.display = 'block';
+        // Clear Day 2 Traffic selection
+        document.querySelectorAll('input[name="day2Traffic"]').forEach(r => r.checked = false);
+        const d2CarPanel = document.getElementById('d2-car-panel');
+        if(d2CarPanel) d2CarPanel.classList.remove('show');
+        const d2CarPlate = document.getElementById('d2-car-plate');
+        if(d2CarPlate) d2CarPlate.value = '';
+      } else {
+        panel.classList.remove('show');
+        invoice.value = '';
+        invoice.classList.remove('error-border');
+        document.getElementById('invoice-error').style.display = 'none';
+        rooms.forEach(r => r.checked = false);
+        document.getElementById('roomType-error').style.display = 'none';
+        toggleRoommate(false);
+        
+        if (d2TrafficContainer) d2TrafficContainer.style.display = 'block';
+        if (d2TrafficMsg) d2TrafficMsg.style.display = 'none';
+      }
+    }
+
+    function toggleRoommate(show) {
+      const panel = document.getElementById('roommate-panel');
+      const schoolInput = document.getElementById('roommate-school');
+      const nameInput = document.getElementById('roommate-name');
+      
+      if (show) {
+        panel.classList.add('show');
+      } else {
+        panel.classList.remove('show');
+        schoolInput.value = '';
+        nameInput.value = '';
+        schoolInput.classList.remove('error-border');
+        nameInput.classList.remove('error-border');
+        document.getElementById('roommate-school-error').style.display = 'none';
+        document.getElementById('roommate-name-error').style.display = 'none';
+      }
+    }
+
+    function toggleTourPanel(type) {
+      const panelA = document.getElementById('tour-a-panel');
+      const panelB = document.getElementById('tour-b-panel');
+      
+      if (type === 'A') {
+        panelA.classList.add('show');
+        panelB.classList.remove('show');
+      } else if (type === 'B') {
+        panelB.classList.add('show');
+        panelA.classList.remove('show');
+      } else {
+        panelA.classList.remove('show');
+        panelB.classList.remove('show');
+      }
+    }
+
+    // --- 驗證邏輯 ---
+    let firstErrorEl = null; // 追蹤第一個錯誤欄位
+
+    function resetFirstError() { firstErrorEl = null; }
+
+    function showError(id, show) {
+      const errorText = document.getElementById(id);
+      const inputId = id.replace('-error', '');
+      const input = document.getElementById(inputId);
+      
+      if (show) {
+        errorText.style.display = 'block';
+        if (input && input.tagName !== 'DIV') input.classList.add('error-border');
+        // 記錄第一個出錯的欄位
+        if (!firstErrorEl) {
+          firstErrorEl = input || errorText;
+        }
+      } else {
+        errorText.style.display = 'none';
+        if (input && input.tagName !== 'DIV') input.classList.remove('error-border');
+      }
+    }
+
+    function scrollToFirstError() {
+      if (firstErrorEl) {
+        firstErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // 嘗試聚焦到該輸入框
+        if (firstErrorEl.tagName === 'INPUT' || firstErrorEl.tagName === 'SELECT') {
+          setTimeout(function() { firstErrorEl.focus(); }, 400);
+        }
+      }
+    }
+
+    function validateIdCard(val) {
+      const idReg = /^[A-Z][12]\d{8}$/i;
+      return idReg.test(val.trim());
+    }
+
+    function validateEmail(val) {
+      const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailReg.test(val.trim());
+    }
+
+    function validateStep1() {
+      resetFirstError();
+      let isValid = true;
+
+
+
+      const name = document.getElementById('name').value.trim();
+
+      if (!name) {
+
+        showError('name-error', true);
+
+        isValid = false;
+
+      } else {
+
+        showError('name-error', false);
+
+      }
+
+
+
+      const genderChecked = document.querySelector('input[name="gender"]:checked');
+
+      if (!genderChecked) {
+
+        showError('gender-error', true);
+
+        isValid = false;
+
+      } else {
+
+        showError('gender-error', false);
+
+      }
+
+
+
+      const idCard = document.getElementById('idCard').value.trim();
+
+      if (!validateIdCard(idCard)) {
+
+        showError('idCard-error', true);
+
+        isValid = false;
+
+      } else {
+
+        showError('idCard-error', false);
+
+      }
+
+
+
+      const birthDate = document.getElementById('birthDate').value;
+
+      if (!birthDate) {
+
+        showError('birthDate-error', true);
+
+        isValid = false;
+
+      } else {
+
+        showError('birthDate-error', false);
+
+      }
+
+
+
+      const school = document.getElementById('school').value.trim();
+
+      if (!school) {
+
+        showError('school-error', true);
+
+        isValid = false;
+
+      } else {
+
+        showError('school-error', false);
+
+      }
+
+
+
+      const title = document.getElementById('title').value.trim();
+
+      if (!title) {
+
+        showError('title-error', true);
+
+        isValid = false;
+
+      } else {
+
+        showError('title-error', false);
+
+      }
+
+
+
+      const email = document.getElementById('email').value.trim();
+
+      if (!validateEmail(email)) {
+
+        showError('email-error', true);
+
+        isValid = false;
+
+      } else {
+
+        showError('email-error', false);
+
+      }
+
+
+
+      const phone = document.getElementById('phone').value.trim();
+      const phoneDigits = phone.replace(/\D/g, '');
+      if (phoneDigits.length !== 10) {
+        showError('phone-error', true);
+        isValid = false;
+      } else {
+        showError('phone-error', false);
+      }
+
+
+
+      const officePhoneVal = document.getElementById('officePhone').value.trim();
+      if (!officePhoneVal) {
+        showError('officePhone-error', true);
+        isValid = false;
+      } else {
+        showError('officePhone-error', false);
+      }
+
+      const emPhone = document.getElementById('emergencyPhone').value.trim();
+      const emPhoneDigits = emPhone.replace(/\D/g, '');
+      if (emPhone && emPhoneDigits.length !== 10) {
+        showError('emergencyPhone-error', true);
+        isValid = false;
+      } else {
+        showError('emergencyPhone-error', false);
+      }
+
+      const publicHoursChecked = document.querySelector('input[name="publicServiceHours"]:checked');
+
+      if (!publicHoursChecked) {
+
+        showError('publicServiceHours-error', true);
+
+        isValid = false;
+
+      } else {
+
+        showError('publicServiceHours-error', false);
+
+      }
+
+
+
+      if (!isValid) scrollToFirstError();
+      return isValid;
+    }
+
+        function validateStep3_actual() {
+      resetFirstError();
+      let isValid = true;
+      const d1TrafficChecked = document.querySelector('input[name="day1Traffic"]:checked');
+      if (!d1TrafficChecked) {
+        showError('day1Traffic-error', true);
+        isValid = false;
+      } else {
+        showError('day1Traffic-error', false);
+        if (d1TrafficChecked.value === '自行開車') {
+          const plate = document.getElementById('d1-car-plate').value.trim();
+          if (!plate) {
+            showError('d1-car-plate-error', true);
+            isValid = false;
+          } else {
+            showError('d1-car-plate-error', false);
+          }
+        }
+      }
+
+      const stayChecked = document.querySelector('input[name="stay"]:checked');
+      const isStay = stayChecked && stayChecked.value === '住宿';
+      
+      if (isStay) {
+        showError('day2Traffic-error', false);
+        showError('d2-car-plate-error', false);
+      } else {
+        const d2TrafficChecked = document.querySelector('input[name="day2Traffic"]:checked');
+        if (!d2TrafficChecked) {
+          showError('day2Traffic-error', true);
+          isValid = false;
+        } else {
+          showError('day2Traffic-error', false);
+          if (d2TrafficChecked.value === '自行開車') {
+            const plate = document.getElementById('d2-car-plate').value.trim();
+            if (!plate) {
+              showError('d2-car-plate-error', true);
+              isValid = false;
+            } else {
+              showError('d2-car-plate-error', false);
+            }
+          }
+        }
+      }
+      if (!isValid) scrollToFirstError();
+      return isValid;
+    }
+
+    function validateStep2_actual() {
+      resetFirstError();
+      let isValid = true;
+      const dietChecked = document.querySelector('input[name="diet"]:checked');
+      if (!dietChecked) {
+        showError('diet-error', true);
+        isValid = false;
+      } else {
+        showError('diet-error', false);
+      }
+
+      const mealsChecked = document.querySelectorAll('input[name="meals"]:checked');
+      if (mealsChecked.length === 0) {
+        showError('meals-error', true);
+        isValid = false;
+      } else {
+        showError('meals-error', false);
+      }
+
+      const stayChecked = document.querySelector('input[name="stay"]:checked');
+      if (!stayChecked) {
+        showError('stay-error', true);
+        isValid = false;
+      } else {
+        showError('stay-error', false);
+        if (stayChecked.value === '住宿') {
+          const invoice = document.getElementById('invoice').value.trim();
+          if (!invoice) {
+            showError('invoice-error', true);
+            isValid = false;
+          } else {
+            showError('invoice-error', false);
+          }
+
+          const roomTypeChecked = document.querySelector('input[name="roomType"]:checked');
+          if (!roomTypeChecked) {
+            showError('roomType-error', true);
+            isValid = false;
+          } else {
+            showError('roomType-error', false);
+            if (roomTypeChecked.id === 'room-double') {
+              const rSchool = document.getElementById('roommate-school').value.trim();
+              if (!rSchool) {
+                showError('roommate-school-error', true);
+                isValid = false;
+              } else {
+                showError('roommate-school-error', false);
+              }
+
+              const rName = document.getElementById('roommate-name').value.trim();
+              if (!rName) {
+                showError('roommate-name-error', true);
+                isValid = false;
+              } else {
+                showError('roommate-name-error', false);
+              }
+            }
+          }
+        }
+      }
+      if (!isValid) scrollToFirstError();
+      return isValid;
+    }
+
+    function validateStep4_actual() {
+      resetFirstError();
+      let isValid = true;
+      const d1AfterChecked = document.querySelector('input[name="day1After"]:checked');
+      if (!d1AfterChecked) {
+        showError('day1After-error', true);
+        isValid = false;
+      } else {
+        showError('day1After-error', false);
+      }
+
+      const departureChecked = document.querySelector('input[name="departure"]:checked');
+      if (!departureChecked) {
+        showError('departure-error', true);
+        isValid = false;
+      } else {
+        showError('departure-error', false);
+        // 檢查美濃名額
+        if (departureChecked.id === 'dep-tour-a') {
+          var remaining = TOUR_A_MAX - (tourACount || 0);
+          if (remaining <= 0) {
+            alert('⚠️ 美濃文化之旅名額已額滿（限 ' + TOUR_A_MAX + ' 人），請改選其他選項。');
+            departureChecked.checked = false;
+            toggleTourPanel('none');
+            isValid = false;
+          }
+        }
+      }
+      if (!isValid) scrollToFirstError();
+      return isValid;
+    }
+
+    function validateStep2() {
+      const v2 = validateStep3_actual();
+      const v3 = validateStep2_actual();
+      const v4 = validateStep4_actual();
+      return v2 && v3 && v4;
+    }
+
+
+    // --- 送出表單資料 ---
+    function showPreview() {
+      if (!validateStep2()) {
+        return;
+      }
+      
+      const selectedMeals = [];
+      document.querySelectorAll('input[name="meals"]:checked').forEach(cb => {
+        selectedMeals.push(cb.value);
+      });
+      const mealsStr = selectedMeals.length > 0 ? selectedMeals.join(', ') : '無';
+
+      const d1TrafficVal = document.querySelector('input[name="day1Traffic"]:checked').value;
+      const d1TrafficFinal = d1TrafficVal === '自行開車' 
+        ? `自行開車 (車牌: ${document.getElementById('d1-car-plate').value.trim()})` 
+        : d1TrafficVal;
+
+      const stayVal_for_traffic = document.querySelector('input[name="stay"]:checked').value;
+      let d2TrafficFinal = '未填寫';
+      if (stayVal_for_traffic === '住宿') {
+        d2TrafficFinal = '已勾選住宿，免填';
+      } else {
+        const d2TrafficChecked = document.querySelector('input[name="day2Traffic"]:checked');
+        if (d2TrafficChecked) {
+          const d2TrafficVal = d2TrafficChecked.value;
+          d2TrafficFinal = d2TrafficVal === '自行開車' 
+            ? `自行開車 (車牌: ${document.getElementById('d2-car-plate').value.trim()})` 
+            : d2TrafficVal;
+        }
+      }
+
+      const stayVal = document.querySelector('input[name="stay"]:checked').value;
+      let stayDetail = '不住宿';
+      if (stayVal === '住宿') {
+        const invoiceVal = document.getElementById('invoice').value.trim();
+        const roomTypeVal = document.querySelector('input[name="roomType"]:checked').value;
+        const roomTypeId = document.querySelector('input[name="roomType"]:checked').id;
+        
+        stayDetail = `住宿 (發票抬頭與統編: ${invoiceVal || '無'}; 房型: ${roomTypeVal}`;
+        if (roomTypeId === 'room-double') {
+          const rSchool = document.getElementById('roommate-school').value.trim();
+          const rName = document.getElementById('roommate-name').value.trim();
+          stayDetail += `; 同房者: ${rSchool} - ${rName}`;
+        }
+        stayDetail += ')';
+      }
+
+      // Generate HTML for preview
+      const previewHtml = `
+        <div class="detail-row"><span class="detail-label">姓名：</span><span class="detail-value">${document.getElementById('name').value.trim()}</span></div>
+        <div class="detail-row"><span class="detail-label">性別：</span><span class="detail-value">${document.querySelector('input[name="gender"]:checked').value}</span></div>
+        <div class="detail-row"><span class="detail-label">身分證字號：</span><span class="detail-value">${document.getElementById('idCard').value.trim().toUpperCase()}</span></div>
+        <div class="detail-row"><span class="detail-label">出生年月日：</span><span class="detail-value">${document.getElementById('birthDate').value}</span></div>
+        <div class="detail-row"><span class="detail-label">學校：</span><span class="detail-value">${document.getElementById('school').value.trim()}</span></div>
+        <div class="detail-row"><span class="detail-label">單位：</span><span class="detail-value">${document.getElementById('unit').value.trim()}</span></div>
+        <div class="detail-row"><span class="detail-label">職稱：</span><span class="detail-value">${document.getElementById('title').value.trim()}</span></div>
+        <div class="detail-row"><span class="detail-label">Email：</span><span class="detail-value">${document.getElementById('email').value.trim()}</span></div>
+        <div class="detail-row"><span class="detail-label">行動電話：</span><span class="detail-value">${document.getElementById('phone').value.trim()}</span></div>
+        <div class="detail-row"><span class="detail-label">辦公室電話：</span><span class="detail-value">${document.getElementById('officePhone').value.trim()}${document.getElementById('officeExt').value.trim() ? ' #' + document.getElementById('officeExt').value.trim() : ''}</span></div>
+        <div class="detail-row"><span class="detail-label">學校地址：</span><span class="detail-value">${document.getElementById('address').value.trim()}</span></div>
+        <div class="detail-row"><span class="detail-label">公務人員時數：</span><span class="detail-value">${document.querySelector('input[name="publicServiceHours"]:checked').value}</span></div>
+        <div class="detail-row"><span class="detail-label">緊急聯絡人：</span><span class="detail-value">${document.getElementById('emergencyContact').value.trim()}</span></div>
+        <div class="detail-row"><span class="detail-label">緊急聯絡電話：</span><span class="detail-value">${document.getElementById('emergencyPhone').value.trim()}</span></div>
+        <div style="height: 1px; background-color: #E2E8F0; margin: 15px 0;"></div>
+        <div class="detail-row"><span class="detail-label">飲食習慣：</span><span class="detail-value">${document.querySelector('input[name="diet"]:checked').value}</span></div>
+        <div class="detail-row"><span class="detail-label">用餐需求：</span><span class="detail-value">${mealsStr}</span></div>
+        <div class="detail-row"><span class="detail-label">住宿安排：</span><span class="detail-value">${stayDetail}</span></div>
+        <div style="height: 1px; background-color: #E2E8F0; margin: 15px 0;"></div>
+        <div class="detail-row"><span class="detail-label">第一天接駁：</span><span class="detail-value">${d1TrafficFinal}</span></div>
+        <div class="detail-row"><span class="detail-label">會議後安排：</span><span class="detail-value">${document.querySelector('input[name="day1After"]:checked').value}</span></div>
+        <div class="detail-row"><span class="detail-label">第二天接駁：</span><span class="detail-value">${d2TrafficFinal}</span></div>
+        <div class="detail-row"><span class="detail-label">第二天參訪：</span><span class="detail-value">${document.querySelector('input[name="departure"]:checked').value}</span></div>
+      `;
+      
+      document.getElementById('preview-details').innerHTML = previewHtml;
+      
+      document.getElementById('register-view').style.display = 'none';
+      document.getElementById('preview-view').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function hidePreview() {
+      document.getElementById('preview-view').style.display = 'none';
+      document.getElementById('register-view').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function submitRegistrationForm() {
+      if (!validateStep2()) {
+        return;
+
+      }
+
+
+
+      document.getElementById('register-view').style.display = 'none';
+      const pv = document.getElementById('preview-view');
+      if (pv) pv.style.display = 'none';
+
+      document.getElementById('loadingState').style.display = 'block';
+
+
+
+      const form = document.getElementById('registrationForm');
+
+      
+
+      const selectedMeals = [];
+
+      document.querySelectorAll('input[name="meals"]:checked').forEach(cb => {
+
+        selectedMeals.push(cb.value);
+
+      });
+
+      const mealsStr = selectedMeals.join(', ');
+
+
+
+      const d1TrafficVal = document.querySelector('input[name="day1Traffic"]:checked').value;
+
+      const d1TrafficFinal = d1TrafficVal === '自行開車' 
+
+        ? `自行開車 (車牌: ${document.getElementById('d1-car-plate').value.trim()})` 
+
+        : d1TrafficVal;
+
+
+
+      const stayVal_for_traffic = document.querySelector('input[name="stay"]:checked').value;
+      let d2TrafficFinal = '未填寫';
+      if (stayVal_for_traffic === '住宿') {
+        d2TrafficFinal = '已勾選住宿，免填';
+      } else {
+        const d2TrafficChecked = document.querySelector('input[name="day2Traffic"]:checked');
+        if (d2TrafficChecked) {
+          const d2TrafficVal = d2TrafficChecked.value;
+          d2TrafficFinal = d2TrafficVal === '自行開車' 
+            ? `自行開車 (車牌: ${document.getElementById('d2-car-plate').value.trim()})` 
+            : d2TrafficVal;
+        }
+      }
+
+
+
+      const stayVal = document.querySelector('input[name="stay"]:checked').value;
+
+      let stayDetail = '不住宿';
+
+      if (stayVal === '住宿') {
+
+        const invoiceVal = document.getElementById('invoice').value.trim();
+
+        const roomTypeVal = document.querySelector('input[name="roomType"]:checked').value;
+
+        const roomTypeId = document.querySelector('input[name="roomType"]:checked').id;
+
+        
+
+        stayDetail = `住宿 (發票抬頭與統編: ${invoiceVal}; 房型: ${roomTypeVal}`;
+
+        if (roomTypeId === 'room-double') {
+
+          const rSchool = document.getElementById('roommate-school').value.trim();
+
+          const rName = document.getElementById('roommate-name').value.trim();
+
+          stayDetail += `; 同房者: ${rSchool} - ${rName}`;
+
+        }
+
+        stayDetail += ')';
+
+      }
+
+
+
+      const payload = {
+
+        name: document.getElementById('name').value.trim(),
+
+        gender: document.querySelector('input[name="gender"]:checked').value,
+
+        idCard: document.getElementById('idCard').value.trim().toUpperCase(),
+
+        birthDate: document.getElementById('birthDate').value,
+
+        school: document.getElementById('school').value.trim(),
+
+        unit: document.getElementById('unit').value.trim(),
+
+        title: document.getElementById('title').value.trim(),
+
+        email: document.getElementById('email').value.trim(),
+
+        phone: document.getElementById('phone').value.trim(),
+
+        officePhone: document.getElementById('officePhone').value.trim() + (document.getElementById('officeExt').value.trim() ? ' #' + document.getElementById('officeExt').value.trim() : ''),
+
+        address: document.getElementById('address').value.trim(),
+
+        publicServiceHours: document.querySelector('input[name="publicServiceHours"]:checked').value,
+
+        emergencyContact: document.getElementById('emergencyContact').value.trim(),
+
+        emergencyPhone: document.getElementById('emergencyPhone').value.trim(),
+
+        
+
+        diet: document.querySelector('input[name="diet"]:checked').value,
+
+        meals: mealsStr,
+
+        day1Traffic: d1TrafficFinal,
+
+        day1After: document.querySelector('input[name="day1After"]:checked').value,
+
+        day2Traffic: d2TrafficFinal,
+
+        stay: stayDetail,
+
+        departure: document.querySelector('input[name="departure"]:checked').value
+
+      };
+
+
+
+      if (typeof google !== 'undefined') {
+
+        google.script.run
+
+          .withSuccessHandler(onRegistrationSuccess)
+
+          .withFailureHandler(onRegistrationFailure)
+
+          .register(payload);
+
+      } else {
+
+        // 外部靜態網域下，使用 JSONP 跨域向 Google Apps Script 提交報名資料
+
+        if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.indexOf("script.google.com") === -1) {
+
+          alert("⚠️ 系統錯誤：尚未設定 Google Apps Script 部署網址，無法提交表單！");
+
+          restoreFormView();
+
+          return;
+
+        }
+
+
+
+        const requestUrl = GAS_WEB_APP_URL + "?callback=onExternalRegSuccess&action=register&payload=" + encodeURIComponent(JSON.stringify(payload));
+
+        
+
+        // 註冊全域 callback 接收回傳值
+
+        window.onExternalRegSuccess = function(response) {
+
+          onRegistrationSuccess(response);
+
+          // 移除 script 標籤與全域變數以保持乾淨
+
+          const oldScript = document.getElementById('externalRegScript');
+
+          if (oldScript) oldScript.remove();
+
+          delete window.onExternalRegSuccess;
+
+        };
+
+
+
+        const script = document.createElement('script');
+
+        script.id = 'externalRegScript';
+
+        script.src = requestUrl;
+
+        script.onerror = function() {
+
+          onRegistrationFailure(new Error("網路連線失敗，或無法與 Google 伺服器通訊。請確認您的「部署網址」是否填寫正確，且權限已設定為「所有人 (Anyone)」！"));
+
+          const oldScript = document.getElementById('externalRegScript');
+
+          if (oldScript) oldScript.remove();
+
+          delete window.onExternalRegSuccess;
+
+        };
+
+        document.body.appendChild(script);
+
+      }
+
+    }
+
+
+
+    function onRegistrationSuccess(response) {
+
+      document.getElementById('loadingState').style.display = 'none';
+
+      
+
+      if (response.success) {
+
+        const p = response.participant || {};
+
+        
+
+        document.getElementById('res-name').innerText = p.name || document.getElementById('name').value;
+
+        document.getElementById('res-school').innerText = p.school || document.getElementById('school').value;
+
+        document.getElementById('res-unit').innerText = (p.unit || document.getElementById('unit').value) || '無';
+
+        document.getElementById('res-title').innerText = p.title || document.getElementById('title').value;
+
+        document.getElementById('res-uid').innerText = response.uid;
+
+        
+
+        document.getElementById('qrImage').src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + response.uid;
+
+        
+
+        document.getElementById('success-view').style.display = 'block';
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      } else {
+
+        alert("報名失敗，原因: " + response.message);
+
+        restoreFormView();
+
+      }
+
+    }
+
+
+
+    function onRegistrationFailure(error) {
+
+      document.getElementById('loadingState').style.display = 'none';
+
+      alert("系統發生嚴重錯誤: " + error.toString());
+
+      restoreFormView();
+
+    }
+
+
+
+    function restoreFormView() {
+
+      document.getElementById('register-view').style.display = 'block';
+      document.getElementById('register-view').querySelector('.form-container-card').style.display = 'block';
+
+      document.getElementById('loadingState').style.display = 'none';
+      // 也隱藏 success-view 以防萬一
+      var sv = document.getElementById('success-view');
+      if (sv) sv.style.display = 'none';
+    }
+
+
+
+    const allInputs = document.querySelectorAll('input, select');
+
+    allInputs.forEach(input => {
+
+      input.addEventListener('input', () => {
+
+        const errorDiv = document.getElementById(`${input.id}-error`);
+
+        if (errorDiv) {
+
+          errorDiv.style.display = 'none';
+
+          input.classList.remove('error-border');
+
+        }
+
+      });
+
+      
+
+      input.addEventListener('change', () => {
+
+        const errorDiv = document.getElementById(`${input.name}-error`);
+
+        if (errorDiv) {
+
+          errorDiv.style.display = 'none';
+
+        }
+
+      });
+
+    });
+
+  // --- 手機版選單切換與自動關閉邏輯 ---
+
+    const menuToggle = document.getElementById('menuToggle');
+
+    const navLinksList = document.querySelector('.nav-links');
+
+    
+
+    menuToggle.addEventListener('click', (e) => {
+
+      e.stopPropagation();
+
+      navLinksList.classList.toggle('show');
+
+    });
+
+
+
+    document.addEventListener('click', (e) => {
+
+      if (!navLinksList.contains(e.target) && e.target !== menuToggle) {
+
+        navLinksList.classList.remove('show');
+
+      }
+
+    });
+
+
+
+    const navLinksItems = document.querySelectorAll('.nav-link');
+
+    navLinksItems.forEach(item => {
+
+      item.addEventListener('click', () => {
+
+        navLinksList.classList.remove('show');
+
+      });
+
+    });
+
+
+
+    
+function formatPhone(input) {
+  let val = input.value.replace(/\D/g, ''); // Remove non-digits
+  if (val.length > 4) {
+    val = val.substring(0, 4) + '-' + val.substring(4, 10);
+  }
+  input.value = val;
+}
+
+</script>
+
+<script>
+// === 「不用餐」互斥邏輯 ===
+(function() {
+  var mealNone = document.getElementById('meal-none');
+  var mealOptions = document.querySelectorAll('.meal-option');
+
+  mealNone.addEventListener('change', function() {
+    if (this.checked) {
+      for (var i = 0; i < mealOptions.length; i++) {
+        mealOptions[i].checked = false;
+      }
+    }
+  });
+
+  for (var i = 0; i < mealOptions.length; i++) {
+    mealOptions[i].addEventListener('change', function() {
+      if (this.checked) {
+        mealNone.checked = false;
+      }
+    });
+  }
+})();
+</script>
+
+
+
+
+<!-- School Selection Modal -->
+<div id="schoolModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+  <div style="background: #fff; width: 90%; max-width: 600px; max-height: 85vh; border-radius: 12px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden;">
+    
+    <div style="padding: 20px; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; background: #F8FAFC;">
+      <h3 style="margin: 0; color: #0F4C81; font-weight: 700; font-size: 18px;">挑選學校/機關</h3>
+      <button type="button" onclick="closeSchoolModal()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #64748B;">&times;</button>
+    </div>
+    
+    <div style="padding: 15px 20px; border-bottom: 1px solid #E2E8F0;">
+      <input type="text" id="schoolSearch" placeholder="🔍 請輸入關鍵字搜尋學校..." style="width: 100%; padding: 12px 15px; border: 2px solid #E2E8F0; border-radius: 8px; font-size: 16px; transition: all 0.2s;" onkeyup="filterSchools()">
+    </div>
+    
+    <div id="schoolList" style="flex: 1; overflow-y: auto; padding: 10px 20px; background: #FAFAFA;">
+      <!-- JavaScript will populate schools here -->
+    </div>
+    
+    <div style="padding: 15px 20px; border-top: 1px solid #E2E8F0; text-align: center; background: #fff;">
+      <button type="button" onclick="selectSchool('其他 (請於備註填寫)')" style="background: #fff; border: 1px solid #0F4C81; color: #0F4C81; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.2s;">
+        找不到我的學校，手動輸入名稱
+      </button>
+    </div>
+  </div>
+</div>
+
+
+  <footer style="background-color: #0F4C81; color: #E2E8F0; text-align: center; padding: 40px 20px; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px;">
+      <div style="font-size: 18px; font-weight: 600; color: #fff;">
+        115學年度公私立大專校院招生研討會議
+      </div>
+      <div style="font-size: 14px; line-height: 1.6; color: #CBD5E1;">
+        指導單位：教育部<br>
+        承辦單位：義守大學
+      </div>
+      <div style="margin-top: 20px; font-size: 13px; color: #94A3B8; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+        &copy; 2026 I-Shou University. All Rights Reserved.
+      </div>
+    </div>
+  </footer>
+
+<script>
+const universities = [
+"國立臺灣大學", "國立清華大學", "國立陽明交通大學", "國立成功大學", "國立政治大學",
+    "國立臺灣師範大學", "國立中央大學", "國立中山大學", "國立中興大學", "國立中正大學",
+    "國立臺北大學", "國立臺灣海洋大學", "國立彰化師範大學", "國立高雄師範大學", "國立東華大學", "國立暨南國際大學",
+    "國立臺北教育大學", "國立臺中教育大學", "國立嘉義大學", "國立臺南大學", "國立屏東大學",
+    "國立臺東大學", "國立宜蘭大學", "國立聯合大學", "國立金門大學", "國立臺灣藝術大學", "國立臺北藝術大學", "國立臺南藝術大學", "國立體育大學", "國立臺灣體育運動大學",
+    "國立高雄大學", "東海大學", "輔仁大學", "東吳大學", "中原大學", "淡江大學", "逢甲大學", "靜宜大學", "長庚大學",
+    "元智大學", "中華大學", "大葉大學", "華梵大學", "義守大學", "世新大學", "銘傳大學", "實踐大學",
+    "高雄醫學大學", "南華大學", "真理大學", "大同大學", "慈濟大學", "臺北醫學大學", "中山醫學大學",
+    "長榮大學", "玄奘大學", "馬偕醫學院", "中信金融管理學院", "法鼓文理學院",
+    "亞洲大學", "開南大學", "佛光大學", "康寧大學", "中央警察大學", "國防大學", "國防醫學院", 
+    "教育部"
+];
+
+let currentSchoolInputId = 'school';
+
+function openSchoolModal(targetId = 'school') {
+  currentSchoolInputId = targetId;
+  document.getElementById('schoolModal').style.display = 'flex';
+  document.getElementById('schoolSearch').value = '';
+  document.getElementById('schoolSearch').focus();
+  renderSchools(universities);
+}
+
+function closeSchoolModal() {
+  document.getElementById('schoolModal').style.display = 'none';
+}
+
+
+const uniAddressData = {
+    "國立臺灣大學": { "zip": "106319", "city": "臺北市", "district": "大安區", "road": "羅斯福路四段", "number": "1號" },
+    "國立清華大學": { "zip": "300044", "city": "新竹市", "district": "東區", "road": "光復路二段", "number": "101號" },
+    "國立陽明交通大學": { "zip": "300093", "city": "新竹市", "district": "東區", "road": "大學路", "number": "1001號" },
+    "國立成功大學": { "zip": "701401", "city": "臺南市", "district": "東區", "road": "大學路", "number": "1號" },
+    "國立政治大學": { "zip": "116011", "city": "臺北市", "district": "文山區", "road": "指南路二段", "number": "64號" },
+    "國立臺灣師範大學": { "zip": "106308", "city": "臺北市", "district": "大安區", "road": "和平東路一段", "number": "162號" },
+    "國立中央大學": { "zip": "320317", "city": "桃園市", "district": "中壢區", "road": "中大路", "number": "300號" },
+    "國立中山大學": { "zip": "804201", "city": "高雄市", "district": "鼓山區", "road": "蓮海路", "number": "70號" },
+    "國立中興大學": { "zip": "402204", "city": "臺中市", "district": "南區", "road": "興大路", "number": "145號" },
+    "國立中正大學": { "zip": "621301", "city": "嘉義縣", "district": "民雄鄉", "road": "大學路一段", "number": "168號" },
+    "國立臺北大學": { "zip": "237303", "city": "新北市", "district": "三峽區", "road": "大學路", "number": "151號" },
+    "國立臺灣海洋大學": { "zip": "202301", "city": "基隆市", "district": "中正區", "road": "北寧路", "number": "2號" },
+    "國立彰化師範大學": { "zip": "500014", "city": "彰化縣", "district": "彰化市", "road": "進德路", "number": "1號" },
+    "國立高雄師範大學": { "zip": "802311", "city": "高雄市", "district": "苓雅區", "road": "和平一路", "number": "116號" },
+    "國立東華大學": { "zip": "974301", "city": "花蓮縣", "district": "壽豐鄉", "road": "大學路二段", "number": "1號" },
+    "國立暨南國際大學": { "zip": "545301", "city": "南投縣", "district": "埔里鎮", "road": "大學路", "number": "1號" },
+    "國立臺北教育大學": { "zip": "106320", "city": "臺北市", "district": "大安區", "road": "和平東路二段", "number": "134號" },
+    "國立臺中教育大學": { "zip": "403514", "city": "臺中市", "district": "西區", "road": "民生路", "number": "140號" },
+    "國立嘉義大學": { "zip": "600355", "city": "嘉義市", "district": "東區", "road": "學府路", "number": "300號" },
+    "國立臺南大學": { "zip": "700301", "city": "臺南市", "district": "中西區", "road": "樹林街二段", "number": "33號" },
+    "國立屏東大學": { "zip": "900391", "city": "屏東縣", "district": "屏東市", "road": "民生路", "number": "4-18號" },
+    "國立臺東大學": { "zip": "950309", "city": "臺東縣", "district": "臺東市", "road": "大學路二段", "number": "369號" },
+    "國立宜蘭大學": { "zip": "260007", "city": "宜蘭縣", "district": "宜蘭市", "road": "神農路一段", "number": "1號" },
+    "國立聯合大學": { "zip": "360302", "city": "苗栗縣", "district": "苗栗市", "road": "聯大路", "number": "2號" },
+    "國立金門大學": { "zip": "892006", "city": "金門縣", "district": "金寧鄉", "road": "大學路", "number": "1號" },
+    "國立臺灣藝術大學": { "zip": "220307", "city": "新北市", "district": "板橋區", "road": "大觀路一段", "number": "59號" },
+    "國立臺北藝術大學": { "zip": "112056", "city": "臺北市", "district": "北投區", "road": "學園路", "number": "1號" },
+    "國立臺南藝術大學": { "zip": "720301", "city": "臺南市", "district": "官田區", "road": "大崎", "number": "66號" },
+    "國立體育大學": { "zip": "333325", "city": "桃園市", "district": "龜山區", "road": "文化一路", "number": "250號" },
+    "國立臺灣體育運動大學": { "zip": "404306", "city": "臺中市", "district": "北區", "road": "雙十路一段", "number": "16號" },
+    "國立高雄大學": { "zip": "811726", "city": "高雄市", "district": "楠梓區", "road": "高雄大學路", "number": "700號" },
+    "東海大學": { "zip": "407102", "city": "臺中市", "district": "西屯區", "road": "臺灣大道四段", "number": "1727號" },
+    "輔仁大學": { "zip": "242062", "city": "新北市", "district": "新莊區", "road": "中正路", "number": "510號" },
+    "東吳大學": { "zip": "111002", "city": "臺北市", "district": "士林區", "road": "臨溪路", "number": "70號" },
+    "中原大學": { "zip": "320314", "city": "桃園市", "district": "中壢區", "road": "中北路", "number": "200號" },
+    "淡江大學": { "zip": "251301", "city": "新北市", "district": "淡水區", "road": "英專路", "number": "151號" },
+    "逢甲大學": { "zip": "407102", "city": "臺中市", "district": "西屯區", "road": "文華路", "number": "100號" },
+    "靜宜大學": { "zip": "433303", "city": "臺中市", "district": "沙鹿區", "road": "臺灣大道七段", "number": "200號" },
+    "長庚大學": { "zip": "333323", "city": "桃園市", "district": "龜山區", "road": "文化一路", "number": "259號" },
+    "元智大學": { "zip": "320315", "city": "桃園市", "district": "中壢區", "road": "遠東路", "number": "135號" },
+    "中華大學": { "zip": "300053", "city": "新竹市", "district": "香山區", "road": "五福路二段", "number": "707號" },
+    "大葉大學": { "zip": "515006", "city": "彰化縣", "district": "大村鄉", "road": "學府路", "number": "168號" },
+    "華梵大學": { "zip": "223011", "city": "新北市", "district": "石碇區", "road": "華梵路", "number": "1號" },
+    "義守大學": { "zip": "840301", "city": "高雄市", "district": "大樹區", "road": "學城路一段", "number": "1號" },
+    "世新大學": { "zip": "116013", "city": "臺北市", "district": "文山區", "road": "木柵路一段", "number": "17巷1號" },
+    "銘傳大學": { "zip": "111013", "city": "臺北市", "district": "士林區", "road": "中山北路五段", "number": "250號" },
+    "實踐大學": { "zip": "104336", "city": "臺北市", "district": "中山區", "road": "大直街", "number": "70號" },
+    "高雄醫學大學": { "zip": "807378", "city": "高雄市", "district": "三民區", "road": "十全一路", "number": "100號" },
+    "南華大學": { "zip": "622301", "city": "嘉義縣", "district": "大林鎮", "road": "南華路一段", "number": "55號" },
+    "真理大學": { "zip": "251010", "city": "新北市", "district": "淡水區", "road": "真理街", "number": "32號" },
+    "大同大學": { "zip": "104085", "city": "臺北市", "district": "中山區", "road": "中山北路三段", "number": "40號" },
+    "慈濟大學": { "zip": "970040", "city": "花蓮縣", "district": "花蓮市", "road": "中央路三段", "number": "701號" },
+    "臺北醫學大學": { "zip": "110301", "city": "臺北市", "district": "信義區", "road": "吳興街", "number": "250號" },
+    "中山醫學大學": { "zip": "402306", "city": "臺中市", "district": "南區", "road": "建國北路一段", "number": "110號" },
+    "長榮大學": { "zip": "711012", "city": "臺南市", "district": "歸仁區", "road": "長大路", "number": "1號" },
+    "玄奘大學": { "zip": "300051", "city": "新竹市", "district": "香山區", "road": "玄奘路", "number": "48號" },
+    "馬偕醫學院": { "zip": "252003", "city": "新北市", "district": "三芝區", "road": "中正路三段", "number": "46號" },
+    "中信金融管理學院": { "zip": "709033", "city": "臺南市", "district": "安南區", "road": "台江大道三段", "number": "600號" },
+    "法鼓文理學院": { "zip": "208006", "city": "新北市", "district": "金山區", "road": "法鼓路", "number": "700號" },
+    "亞洲大學": { "zip": "413305", "city": "臺中市", "district": "霧峰區", "road": "柳豐路", "number": "500號" },
+    "開南大學": { "zip": "338054", "city": "桃園市", "district": "蘆竹區", "road": "開南路", "number": "1號" },
+    "佛光大學": { "zip": "262002", "city": "宜蘭縣", "district": "礁溪鄉", "road": "林尾路", "number": "160號" },
+    "康寧大學": { "zip": "114059", "city": "臺北市", "district": "內湖區", "road": "康寧路三段", "number": "75巷137號" },
+    "中央警察大學": { "zip": "333321", "city": "桃園市", "district": "龜山區", "road": "樹人路", "number": "56號" },
+    "國防大學": { "zip": "334024", "city": "桃園市", "district": "八德區", "road": "興豐路", "number": "1000號" },
+    "國防醫學院": { "zip": "114064", "city": "臺北市", "district": "內湖區", "road": "民權東路六段", "number": "161號" },
+    "教育部": { "zip": "100217", "city": "臺北市", "district": "中正區", "road": "中山南路", "number": "5號" }
+};
+
+function autoFillAddress(schoolName) {
+    if (uniAddressData[schoolName]) {
+        const data = uniAddressData[schoolName];
+        
+        // 1. Fill City
+        const citySelect = document.getElementById('addr-city');
+        if (citySelect) {
+            citySelect.value = data.city;
+            updateDistricts(); // Trigger district population
+            
+            // Wait a tiny bit for the DOM to update the district dropdown
+            setTimeout(() => {
+                // 2. Fill District
+                const districtSelect = document.getElementById('addr-district');
+                if (districtSelect) {
+                    districtSelect.value = data.district;
+                    districtSelect.disabled = false;
+                }
+                
+                // 3. Fill the rest
+                document.getElementById('addr-zip').value = data.zip;
+                document.getElementById('addr-road').value = data.road;
+                document.getElementById('addr-alley').value = '';
+                document.getElementById('addr-number').value = data.number;
+                const deptInput = document.getElementById('addr-dept');
+                if(deptInput) deptInput.value = '';
+                
+                syncAddress();
+                
+                // Flash animation to show user it was auto-filled
+                const addrGroup = document.getElementById('address-group');
+                addrGroup.style.transition = 'all 0.3s';
+                addrGroup.style.boxShadow = '0 0 15px rgba(217, 119, 6, 0.4)';
+                addrGroup.style.border = '2px solid #D97706';
+                addrGroup.style.padding = '10px';
+                addrGroup.style.borderRadius = '8px';
+                
+                setTimeout(() => {
+                    addrGroup.style.boxShadow = 'none';
+                    addrGroup.style.border = 'none';
+                    addrGroup.style.padding = '0';
+                }, 1500);
+                
+            }, 50);
+        }
+    }
+}
+
+
+function selectSchool(schoolName) {
+  const inputField = document.getElementById(currentSchoolInputId);
+  const otherInput = document.getElementById('school-other');
+  
+  inputField.value = schoolName;
+  // 觸發 input 事件以清除錯誤提示
+  inputField.dispatchEvent(new Event('input', { bubbles: true }));
+  
+  closeSchoolModal();
+  
+  // 只有當選填的是主報名人的學校時，才處理「其他」選項與地址帶入
+  if (currentSchoolInputId === 'school') {
+    if(schoolName === '其他 (請於備註填寫)') {
+      otherInput.style.display = 'block';
+      otherInput.required = true;
+      otherInput.focus();
+    } else {
+      otherInput.style.display = 'none';
+      otherInput.required = false;
+      otherInput.value = '';
+      
+      // AUTO FILL ADDRESS MAGIC!
+      autoFillAddress(schoolName);
+    }
+  } else if (currentSchoolInputId === 'roommate-school') {
+    if (schoolName === '其他 (請於備註填寫)') {
+      inputField.value = '';
+      inputField.removeAttribute('readonly');
+      inputField.placeholder = '請手動輸入同房者學校名稱';
+      inputField.focus();
+    } else {
+      inputField.setAttribute('readonly', 'readonly');
+      inputField.placeholder = '請點擊選擇學校/機關';
+    }
+  }
+}
+
+function renderSchools(list) {
+  const container = document.getElementById('schoolList');
+  container.innerHTML = '';
+  if(list.length === 0) {
+    container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94A3B8;">找不到相關學校，請點擊下方按鈕手動輸入。</div>';
+    return;
+  }
+  
+  let html = '<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; padding: 10px 0;">';
+  list.forEach(school => {
+    html += `<div onclick="selectSchool('${school}')" style="background: #fff; padding: 12px 15px; border: 1px solid #E2E8F0; border-radius: 6px; cursor: pointer; transition: all 0.15s; font-size: 15px; color: #1E293B;" onmouseover="this.style.borderColor='#0F4C81'; this.style.color='#0F4C81';" onmouseout="this.style.borderColor='#E2E8F0'; this.style.color='#1E293B';">${school}</div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function filterSchools() {
+  const keyword = document.getElementById('schoolSearch').value.toLowerCase();
+  const filtered = universities.filter(school => school.toLowerCase().includes(keyword));
+  renderSchools(filtered);
+}
+
+// Ensure the old JS event listener for <select> doesn't break anything, though we removed the <select> tag.
+
+function formatPhone(input) {
+  let val = input.value.replace(/\D/g, ''); // Remove non-digits
+  if (val.length > 4) {
+    val = val.substring(0, 4) + '-' + val.substring(4, 10);
+  }
+  input.value = val;
+}
+
+</script>
+
+
+<script>
+const twAddressData = {
+    "臺北市": {"中正區":"100", "大同區":"103", "中山區":"104", "松山區":"105", "大安區":"106", "萬華區":"108", "信義區":"110", "士林區":"111", "北投區":"112", "內湖區":"114", "南港區":"115", "文山區":"116"},
+    "基隆市": {"仁愛區":"200", "信義區":"201", "中正區":"202", "中山區":"203", "安樂區":"204", "暖暖區":"205", "七堵區":"206"},
+    "新北市": {"萬里區":"207", "金山區":"208", "板橋區":"220", "汐止區":"221", "深坑區":"222", "石碇區":"223", "瑞芳區":"224", "平溪區":"226", "雙溪區":"227", "貢寮區":"228", "新店區":"231", "坪林區":"232", "烏來區":"233", "永和區":"234", "中和區":"235", "土城區":"236", "三峽區":"237", "樹林區":"238", "鶯歌區":"239", "三重區":"241", "新莊區":"242", "泰山區":"243", "林口區":"244", "蘆洲區":"247", "五股區":"248", "八里區":"249", "淡水區":"251", "三芝區":"252", "石門區":"253"},
+    "連江縣": {"南竿鄉":"209", "北竿鄉":"210", "莒光鄉":"211", "東引鄉":"212"},
+    "宜蘭縣": {"宜蘭市":"260", "頭城鎮":"261", "礁溪鄉":"262", "壯圍鄉":"263", "員山鄉":"264", "羅東鎮":"265", "三星鄉":"266", "大同鄉":"267", "五結鄉":"268", "冬山鄉":"269", "蘇澳鎮":"270", "南澳鄉":"272", "釣魚臺":"290"},
+    "新竹市": {"東區":"300", "北區":"300", "香山區":"300"},
+    "新竹縣": {"竹北市":"302", "湖口鄉":"303", "新豐鄉":"304", "新埔鎮":"305", "關西鎮":"306", "芎林鄉":"307", "寶山鄉":"308", "竹東鎮":"310", "五峰鄉":"311", "橫山鄉":"312", "尖石鄉":"313", "北埔鄉":"314", "峨眉鄉":"315"},
+    "桃園市": {"中壢區":"320", "平鎮區":"324", "龍潭區":"325", "楊梅區":"326", "新屋區":"327", "觀音區":"328", "桃園區":"330", "龜山區":"333", "八德區":"334", "大溪區":"335", "復興區":"336", "大園區":"337", "蘆竹區":"338"},
+    "苗栗縣": {"竹南鎮":"350", "頭份市":"351", "三灣鄉":"352", "南庄鄉":"353", "獅潭鄉":"354", "後龍鎮":"356", "通霄鎮":"357", "苑裡鎮":"358", "苗栗市":"360", "造橋鄉":"361", "頭屋鄉":"362", "公館鄉":"363", "大湖鄉":"364", "泰安鄉":"365", "銅鑼鄉":"366", "三義鄉":"367", "西湖鄉":"368", "卓蘭鎮":"369"},
+    "臺中市": {"中區":"400", "東區":"401", "南區":"402", "西區":"403", "北區":"404", "北屯區":"406", "西屯區":"407", "南屯區":"408", "太平區":"411", "大里區":"412", "霧峰區":"413", "烏日區":"414", "豐原區":"420", "后里區":"421", "石岡區":"422", "東勢區":"423", "和平區":"424", "新社區":"426", "潭子區":"427", "大雅區":"428", "神岡區":"429", "大肚區":"432", "龍井區":"433", "沙鹿區":"434", "梧棲區":"435", "清水區":"436", "大甲區":"437", "外埔區":"438", "大安區":"439"},
+    "彰化縣": {"彰化市":"500", "芬園鄉":"502", "花壇鄉":"503", "秀水鄉":"504", "鹿港鎮":"505", "福興鄉":"506", "線西鄉":"507", "和美鎮":"508", "伸港鄉":"509", "員林市":"510", "社頭鄉":"511", "田中鎮":"520", "二水鄉":"530", "溪湖鎮":"514", "大村鄉":"515", "埔鹽鄉":"516", "埔心鄉":"513", "永靖鄉":"512", "北斗鎮":"521", "田尾鄉":"522", "埤頭鄉":"523", "溪州鄉":"524", "竹塘鄉":"525", "二林鎮":"526", "大城鄉":"527", "芳苑鄉":"528"},
+    "南投縣": {"南投市":"540", "中寮鄉":"541", "草屯鎮":"542", "國姓鄉":"544", "埔里鎮":"545", "仁愛鄉":"546", "名間鄉":"551", "集集鎮":"552", "水里鄉":"553", "魚池鄉":"555", "信義鄉":"556", "竹山鎮":"557", "鹿谷鄉":"558"},
+    "嘉義市": {"東區":"600", "西區":"600"},
+    "嘉義縣": {"番路鄉":"602", "梅山鄉":"603", "竹崎鄉":"604", "阿里山":"605", "中埔鄉":"606", "大埔鄉":"607", "水上鄉":"608", "鹿草鄉":"611", "太保市":"612", "朴子市":"613", "東石鄉":"614", "六腳鄉":"615", "新港鄉":"616", "民雄鄉":"621", "大林鎮":"622", "溪口鄉":"623", "義竹鄉":"624", "布袋鎮":"625"},
+    "雲林縣": {"斗南鎮":"630", "大埤鄉":"631", "虎尾鎮":"632", "土庫鎮":"633", "褒忠鄉":"634", "東勢鄉":"635", "臺西鄉":"636", "崙背鄉":"637", "麥寮鄉":"638", "斗六市":"640", "林內鄉":"643", "古坑鄉":"646", "莿桐鄉":"647", "西螺鎮":"648", "二崙鄉":"649", "北港鎮":"651", "水林鄉":"652", "口湖鄉":"653", "四湖鄉":"654", "元長鄉":"655"},
+    "臺南市": {"中西區":"700", "東區":"701", "南區":"702", "北區":"704", "安平區":"708", "安南區":"709", "永康區":"710", "歸仁區":"711", "新化區":"712", "左鎮區":"713", "玉井區":"714", "楠西區":"715", "南化區":"716", "仁德區":"717", "關廟區":"718", "龍崎區":"719", "官田區":"720", "麻豆區":"721", "佳里區":"722", "西港區":"723", "七股區":"724", "將軍區":"725", "學甲區":"726", "北門區":"727", "新營區":"730", "後壁區":"731", "白河區":"732", "東山區":"733", "六甲區":"734", "下營區":"735", "柳營區":"736", "鹽水區":"737", "善化區":"741", "大內區":"742", "山上區":"743", "新市區":"744", "安定區":"745"},
+    "高雄市": {"新興區":"800", "前金區":"801", "苓雅區":"802", "鹽埕區":"803", "鼓山區":"804", "旗津區":"805", "前鎮區":"806", "三民區":"807", "楠梓區":"811", "小港區":"812", "左營區":"813", "仁武區":"814", "大社區":"815", "東沙群島":"817", "南沙群島":"819", "岡山區":"820", "路竹區":"821", "阿蓮區":"822", "田寮區":"823", "燕巢區":"824", "橋頭區":"825", "梓官區":"826", "彌陀區":"827", "永安區":"828", "湖內區":"829", "鳳山區":"830", "大寮區":"831", "林園區":"832", "鳥松區":"833", "大樹區":"840", "旗山區":"842", "美濃區":"843", "六龜區":"844", "內門區":"845", "杉林區":"846", "甲仙區":"847", "桃源區":"848", "那瑪夏區":"849", "茂林區":"851", "茄萣區":"852"},
+    "屏東縣": {"屏東市":"900", "三地門鄉":"901", "霧臺鄉":"902", "瑪家鄉":"903", "九如鄉":"904", "里港鄉":"905", "高樹鄉":"906", "鹽埔鄉":"907", "長治鄉":"908", "麟洛鄉":"909", "竹田鄉":"911", "內埔鄉":"912", "萬丹鄉":"913", "潮州鎮":"920", "泰武鄉":"921", "來義鄉":"922", "萬巒鄉":"923", "崁頂鄉":"924", "新埤鄉":"925", "南州鄉":"926", "林邊鄉":"927", "東港鎮":"928", "琉球鄉":"929", "佳冬鄉":"931", "新園鄉":"932", "枋寮鄉":"940", "枋山鄉":"941", "春日鄉":"942", "獅子鄉":"943", "車城鄉":"944", "牡丹鄉":"945", "恆春鎮":"946", "滿州鄉":"947"},
+    "臺東縣": {"臺東市":"950", "綠島鄉":"951", "蘭嶼鄉":"952", "延平鄉":"953", "卑南鄉":"954", "鹿野鄉":"955", "關山鎮":"956", "海端鄉":"957", "池上鄉":"958", "東河鄉":"959", "成功鎮":"961", "長濱鄉":"962", "太麻里鄉":"963", "金峰鄉":"964", "大武鄉":"965", "達仁鄉":"966"},
+    "花蓮縣": {"花蓮市":"970", "新城鄉":"971", "秀林鄉":"972", "吉安鄉":"973", "壽豐鄉":"974", "鳳林鎮":"975", "光復鄉":"976", "豐濱鄉":"977", "瑞穗鄉":"978", "萬榮鄉":"979", "玉里鎮":"981", "卓溪鄉":"982", "富里鄉":"983"},
+    "金門縣": {"金沙鎮":"890", "金湖鎮":"891", "金寧鄉":"892", "金城鎮":"893", "烈嶼鄉":"894", "烏坵鄉":"896"},
+    "澎湖縣": {"馬公市":"880", "西嶼鄉":"881", "望安鄉":"882", "七美鄉":"883", "白沙鄉":"884", "湖西鄉":"885"}
+};
+
+// Initialize city dropdown
+window.addEventListener('DOMContentLoaded', () => {
+    const citySelect = document.getElementById('addr-city');
+    if(!citySelect) return;
+    
+    let html = '<option value="" disabled selected>選擇縣市</option>';
+    for (let city in twAddressData) {
+        html += `<option value="${city}">${city}</option>`;
+    }
+    citySelect.innerHTML = html;
+});
+
+function updateDistricts() {
+    const citySelect = document.getElementById('addr-city');
+    const districtSelect = document.getElementById('addr-district');
+    const zipInput = document.getElementById('addr-zip');
+    
+    const city = citySelect.value;
+    zipInput.value = ''; // clear zip
+    
+    if (city && twAddressData[city]) {
+        let html = '<option value="" disabled selected>選擇區域</option>';
+        for (let district in twAddressData[city]) {
+            html += `<option value="${district}">${district}</option>`;
+        }
+        districtSelect.innerHTML = html;
+        districtSelect.disabled = false;
+    }
+    syncAddress();
+}
+
+function updateZipCode() {
+    const city = document.getElementById('addr-city').value;
+    const district = document.getElementById('addr-district').value;
+    const zipInput = document.getElementById('addr-zip');
+    
+    if (city && district && twAddressData[city][district]) {
+        zipInput.value = twAddressData[city][district];
+    }
+    syncAddress();
+}
+
+function syncAddress() {
+    const hiddenAddr = document.getElementById('address');
+    if(!hiddenAddr) return;
+    
+    const zip = document.getElementById('addr-zip').value || '';
+    const city = document.getElementById('addr-city').value || '';
+    const district = document.getElementById('addr-district').value || '';
+    const road = document.getElementById('addr-road').value || '';
+    const alley = document.getElementById('addr-alley').value || '';
+    const number = document.getElementById('addr-number').value || '';
+    const dept = document.getElementById('addr-dept').value || '';
+    
+    let fullAddr = `${zip}${city}${district}${road}${alley}${number}`;
+    if (dept) {
+        fullAddr += ` (${dept})`;
+    }
+    
+    hiddenAddr.value = fullAddr;
+}
+
+function formatPhone(input) {
+  let val = input.value.replace(/\D/g, ''); // Remove non-digits
+  if (val.length > 4) {
+    val = val.substring(0, 4) + '-' + val.substring(4, 10);
+  }
+  input.value = val;
+}
+
+/* 議程表手機版：動態加 data-label */
+(function(){
+  var tbl = document.querySelector('.agenda-table');
+  if(!tbl) return;
+  var headers = ['日期','時間','活動內容','主持人','地點'];
+  var rows = tbl.querySelectorAll('tbody tr');
+  // Build a grid to track rowspan occupancy
+  var grid = []; // grid[rowIdx][colIdx] = true if occupied by a rowspan from above
+  var rowArr = Array.from(rows);
+  for(var i=0;i<rowArr.length;i++) grid[i] = {};
+
+  for(var ri=0; ri<rowArr.length; ri++){
+    var tr = rowArr[ri];
+    if(tr.classList.contains('agenda-day-header')) continue;
+    var cells = tr.querySelectorAll('td');
+    var ci = 0; // logical column index
+    var cellIdx = 0;
+    while(cellIdx < cells.length){
+      // Skip columns occupied by rowspan from above
+      while(grid[ri][ci]) ci++;
+      var td = cells[cellIdx];
+      var rs = parseInt(td.getAttribute('rowspan'))||1;
+      var cs = parseInt(td.getAttribute('colspan'))||1;
+      // Mark grid for rowspan
+      for(var dr=0;dr<rs;dr++){
+        for(var dc=0;dc<cs;dc++){
+          if(grid[ri+dr]) grid[ri+dr][ci+dc] = true;
+        }
+      }
+      // Assign label
+      if(ci < headers.length){
+        td.setAttribute('data-label', headers[ci]);
+      }
+      // For colspan=2 spanning 活動+主持人, label as 活動內容
+      if(cs===2 && ci===2){
+        td.setAttribute('data-label','活動內容');
+      }
+      ci += cs;
+      cellIdx++;
+    }
+  }
+})();
+
+</script>
+
 </body>
+
+
 </html>
+

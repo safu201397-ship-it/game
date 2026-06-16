@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>資料管理</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
+    :root {
+      --sidebar-w: 220px;
+      --bg: #0F172A;
+      --bg-content: #1E293B;
+      --card: #334155;
+      --card-hover: #3E4F6A;
+      --primary: #3B82F6;
+      --primary-glow: rgba(59,130,246,0.25);
+      --success: #10B981;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+      --purple: #8B5CF6;
+      --pink: #EC4899;
+      --cyan: #06B6D4;
+      --text: #F1F5F9;
+      --text-sub: #94A3B8;
+      --border: #475569;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-size: 18px !important;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    /* ===== 登入畫面 ===== */
+    #login-screen {
+      position: fixed; inset: 0;
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 9999;
+    }
+    .login-card {
+      background: var(--bg-content);
+      border: 1px solid var(--border);
+      padding: 48px 40px; border-radius: 20px;
+      box-shadow: 0 0 60px rgba(59,130,246,0.15);
+      width: 90%; max-width: 420px; text-align: center;
+    }
+    .login-card h2 {
+      font-size: 26px; font-weight: 900;
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .login-card p { color: var(--text-sub); font-size: 14px; margin-bottom: 28px; }
+    .login-card input {
+      width: 100%; padding: 14px 18px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--bg);
+      color: var(--text); font-size: 16px; outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-card input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+    .login-card button {
+      width: 100%; margin-top: 20px;
+      background: linear-gradient(135deg, #3B82F6, #2563EB);
+      color: white; border: none; padding: 14px; border-radius: 10px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .login-card button:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(59,130,246,0.4); }
+
+    /* ===== Loading ===== */
+    #loading-overlay {
+      position: fixed; inset: 0; background: rgba(15,23,42,0.9);
+      z-index: 8000; display: none; justify-content: center; align-items: center;
+      flex-direction: column; gap: 16px;
+    }
+    .spinner {
+      border: 4px solid var(--border); border-top: 4px solid var(--primary);
+      border-radius: 50%; width: 44px; height: 44px; animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loading-text { font-weight: 700; color: var(--primary); font-size: 15px; }
+
+    /* ===== 主佈局 ===== */
+    #main-dashboard { display: none; height: 100vh; }
+
+    .layout { display: flex; height: 100vh; }
+
+    /* ===== 左側選單 ===== */
+    .sidebar {
+      width: var(--sidebar-w); min-width: var(--sidebar-w);
+      background: var(--bg-content);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      padding: 20px 0;
+    }
+    .sidebar-logo {
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+    .sidebar-logo h1 {
+      font-size: 18px; font-weight: 900;
+      background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .sidebar-logo span { font-size: 11px; color: var(--text-sub); }
+
+    .nav-section { padding: 0 12px; margin-bottom: 8px; }
+    .nav-label { font-size: 11px; color: var(--text-sub); padding: 8px 12px; text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 16px; border-radius: 10px;
+      cursor: pointer; transition: all 0.15s;
+      color: var(--text-sub); font-size: 14px; font-weight: 500;
+      margin-bottom: 2px;
+    }
+    .nav-item:hover { background: var(--card); color: var(--text); }
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.15));
+      color: var(--primary); font-weight: 700;
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+    .nav-icon { font-size: 18px; width: 24px; text-align: center; }
+
+    .sidebar-footer {
+      margin-top: auto; padding: 16px 12px;
+      border-top: 1px solid var(--border);
+    }
+    .logout-btn {
+      width: 100%; padding: 10px; border-radius: 8px;
+      background: var(--card); color: var(--text-sub); border: 1px solid var(--border);
+      cursor: pointer; font-size: 13px; font-weight: 600;
+      transition: all 0.15s;
+    }
+    .logout-btn:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+    /* ===== 右側內容區 ===== */
+    .content {
+      flex: 1; overflow-y: auto; padding: 28px 32px;
+      background: var(--bg);
+    }
+    .content::-webkit-scrollbar { width: 6px; }
+    .content::-webkit-scrollbar-track { background: transparent; }
+    .content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .page-title {
+      font-size: 24px; font-weight: 900; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .page-title .icon { font-size: 28px; }
+
+    /* ===== 統計卡片 ===== */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--card); padding: 20px; border-radius: 14px;
+      border: 1px solid var(--border); cursor: pointer;
+      transition: all 0.2s; position: relative; overflow: hidden;
+    }
+    .stat-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--primary); opacity: 0; transition: opacity 0.2s;
+    }
+    .stat-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+    .stat-card:hover::before { opacity: 1; }
+    .stat-card.active-filter { border-color: var(--primary); box-shadow: 0 0 20px var(--primary-glow); }
+    .stat-card.active-filter::before { opacity: 1; }
+
+    .stat-label { font-size: 13px; color: var(--text-sub); font-weight: 600; margin-bottom: 8px; }
+    .stat-num { font-size: 32px; font-weight: 900; line-height: 1; }
+    .stat-detail { font-size: 12px; color: var(--text-sub); margin-top: 6px; }
+
+    /* ===== 工具列 ===== */
+    .toolbar {
+      display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;
+      align-items: center;
+    }
+    .toolbar input, .toolbar select {
+      padding: 10px 16px; border-radius: 10px;
+      border: 1px solid var(--border); background: var(--card);
+      color: var(--text); font-size: 14px; outline: none;
+      flex: 1; min-width: 200px;
+      transition: border-color 0.2s;
+    }
+    .toolbar input:focus, .toolbar select:focus { border-color: var(--primary); }
+    .toolbar select option { background: var(--card); }
+    .tool-btn {
+      padding: 10px 20px; border-radius: 10px; border: none;
+      font-weight: 700; cursor: pointer; font-size: 13px;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-refresh { background: var(--primary); color: white; }
+    .btn-refresh:hover { background: #2563EB; }
+    .btn-export { background: var(--success); color: white; }
+    .btn-export:hover { background: #059669; }
+
+    /* ===== 資料表 ===== */
+    .table-wrap {
+      background: var(--bg-content); border-radius: 14px;
+      border: 1px solid var(--border); overflow-x: auto;
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 800px; }
+    th { padding: 14px 16px; text-align: left; font-size: 12px; color: var(--text-sub); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: var(--card); white-space: nowrap; border-bottom: 1px solid var(--border); }
+    td { padding: 14px 16px; font-size: 13px; border-bottom: 1px solid rgba(71,85,105,0.4); vertical-align: top; }
+    tbody tr { transition: background 0.1s; }
+    tbody tr:hover { background: rgba(59,130,246,0.05); }
+
+    .badge {
+      padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;
+      display: inline-block;
+    }
+    .badge-green { background: rgba(16,185,129,0.15); color: #34D399; }
+    .badge-yellow { background: rgba(245,158,11,0.15); color: #FBBF24; }
+    .badge-blue { background: rgba(59,130,246,0.15); color: #60A5FA; }
+    .badge-purple { background: rgba(139,92,246,0.15); color: #A78BFA; }
+    .badge-pink { background: rgba(236,72,153,0.15); color: #F472B6; }
+    .badge-red { background: rgba(239,68,68,0.15); color: #F87171; }
+
+    .action-btn {
+      padding: 5px 10px; border-radius: 6px; border: none;
+      cursor: pointer; font-size: 11px; font-weight: 700;
+      color: white; margin-right: 4px; transition: opacity 0.15s;
+    }
+    .action-btn:hover { opacity: 0.8; }
+    .btn-toggle { background: var(--warning); }
+    .btn-delete { background: var(--danger); }
+
+    .empty-row { text-align: center; color: var(--text-sub); padding: 40px !important; }
+
+    /* ===== 總覽大數字 ===== */
+    .overview-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px;
+    }
+    .overview-card {
+      background: var(--card); border-radius: 14px; padding: 24px;
+      border: 1px solid var(--border); text-align: center;
+    }
+    .overview-card .big-num { font-size: 48px; font-weight: 900; line-height: 1.1; }
+    .overview-card .label { font-size: 14px; color: var(--text-sub); margin-top: 8px; font-weight: 600; }
+
+    /* ===== 聯絡通訊專用 ===== */
+    .email-section { margin-bottom: 28px; }
+    .email-section h3 { font-size: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .email-box {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px; max-height: 200px; overflow-y: auto; font-size: 13px;
+      line-height: 1.8; color: var(--text-sub); word-break: break-all;
+      margin-bottom: 12px;
+    }
+    .email-box::-webkit-scrollbar { width: 5px; }
+    .email-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .copy-btn {
+      padding: 8px 18px; border-radius: 8px; border: none;
+      font-weight: 700; cursor: pointer; font-size: 13px;
+      transition: all 0.15s; margin-right: 8px; margin-bottom: 8px;
+    }
+    .copy-btn:hover { transform: translateY(-1px); }
+    .copy-blue { background: var(--primary); color: white; }
+    .copy-green { background: var(--success); color: white; }
+    .copy-purple { background: var(--purple); color: white; }
+    .contact-count { color: var(--text-sub); font-size: 13px; margin-left: 8px; font-weight: 400; }
+    .toast {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      background: var(--success); color: white; padding: 12px 28px; border-radius: 10px;
+      font-weight: 700; font-size: 14px; z-index: 9999;
+      animation: toastIn 0.3s ease, toastOut 0.3s ease 1.5s forwards;
+      box-shadow: 0 8px 25px rgba(16,185,129,0.4);
+    }
+    @keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(20px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+    @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+
+    @media (max-width: 900px) {
+      .sidebar { width: 60px; min-width: 60px; }
+      .sidebar .nav-item span, .sidebar-logo span, .sidebar-logo h1, .nav-label { display: none; }
+      .nav-item { justify-content: center; padding: 12px; }
+      .nav-icon { margin: 0; }
+      .content { padding: 20px 16px; }
+      .overview-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 登入 -->
+  <div id="login-screen">
+    <div class="login-card">
+      <h2>🏛 報名資料管理</h2>
+      <p>請輸入管理員密碼</p>
+      <input type="password" id="pwd-input" placeholder="輸入密碼..." onkeypress="if(event.key==='Enter') login()">
+      <button onclick="login()">登入系統</button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-text">載入資料中...</div>
+  </div>
+
+  <!-- 主畫面 -->
+  <div id="main-dashboard">
+    <div class="layout">
+
+      <!-- 左側選單 -->
+      <div class="sidebar">
+        <div class="sidebar-logo">
+          <h1>戰情室</h1>
+          <span>Admin Dashboard</span>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-label">主要</div>
+          <div class="nav-item active" onclick="switchPage('overview')">
+            <span class="nav-icon">📊</span><span>總覽</span>
+          </div>
+          <div class="nav-item" onclick="switchPage('food')">
+            <span class="nav-icon">🍱</span><span>食 — 餐飲</span>
+          </div>
+          <div class="nav-item" onclick="switchPage('stay')">
+            <span class="nav-icon">🏨</span><span>住 — 住宿</span>
+          </div>
+          <div class="nav-item" onclick="switchPage('transport')">
+            <span class="nav-icon">🚄</span><span>行 — 交通</span>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-label">管理</div>
+          <div class="nav-item" onclick="switchPage('contact')">
+            <span class="nav-icon">✉️</span><span>聯絡通訊</span>
+          </div>
+          <div class="nav-item" onclick="switchPage('list')">
+            <span class="nav-icon">📋</span><span>完整名單</span>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <button class="logout-btn" onclick="logout()">🚪 登出系統</button>
+        </div>
+      </div>
+
+      <!-- 右側內容 -->
+      <div class="content">
+
+        <!-- ====== 總覽 ====== -->
+        <div id="page-overview" class="page active">
+          <div class="page-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <span><span class="icon">📊</span> 總覽儀表板</span>
+            <button class="btn" style="background: #ef4444; color: white; font-size: 14px; padding: 6px 12px; border: none; cursor: pointer; border-radius: 6px; font-weight: 600;" onclick="clearAllDataConfirm()">🗑️ 清除所有資料</button>
+          </div>
+          <div class="overview-grid">
+            <div class="overview-card">
+              <div class="big-num" style="color:var(--primary)" id="ov-total">0</div>
+              <div class="label">總報名人數</div>
+            </div>
+            <div class="overview-card">
+              <div class="big-num" style="color:var(--success)" id="ov-checked">0</div>
+              <div class="label" id="ov-rate">已報到 (0%)</div>
+            </div>
+            <div class="overview-card">
+              <div class="big-num" style="color:var(--warning)" id="ov-unchecked">0</div>
+              <div class="label">未報到</div>
+            </div>
+          </div>
+          <div class="stats-row" id="ov-summary-cards"></div>
+        </div>
+
+        <!-- ====== 食 ====== -->
+        <div id="page-food" class="page">
+          <div class="page-title"><span class="icon">🍱</span> 食 — 餐飲統計</div>
+          <div class="stats-row" id="food-cards"></div>
+          <div class="toolbar">
+            <input type="text" id="food-search" placeholder="搜尋姓名..." oninput="renderFoodTable()">
+            <select id="food-filter" onchange="renderFoodTable()">
+              <option value="">全部</option>
+              <option value="d1lunch">8/25 午餐</option>
+              <option value="d2lunch">8/26 午餐</option>
+              <option value="dinner">晚宴</option>
+              
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>姓名</th><th>學校/機關</th><th>飲食習慣</th><th>8/25 午餐</th><th>8/26 午餐</th><th>晚宴</th>
+              </tr></thead>
+              <tbody id="food-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ====== 住 ====== -->
+        <div id="page-stay" class="page">
+          <div class="page-title"><span class="icon">🏨</span> 住 — 住宿統計</div>
+          <div class="stats-row" id="stay-cards"></div>
+          <div class="toolbar" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <input type="text" id="stay-search" placeholder="搜尋姓名..." oninput="renderStayTable()">
+            <select id="stay-filter" onchange="renderStayTable()">
+              <option value="">全部</option>
+              <option value="hotel">有住宿</option>
+              <option value="nohotel">不住宿</option>
+            </select>
+            <button class="btn" style="margin-left: auto; background: var(--success); color: white;" onclick="exportStayExcel()">📥 匯出 Excel</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>姓名</th><th>學校/機關</th><th style="white-space:nowrap;">住宿安排</th><th>發票抬頭與統編</th><th>房型(含同房者)</th><th>報到狀態</th>
+              </tr></thead>
+              <tbody id="stay-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ====== 行 ====== -->
+        <div id="page-transport" class="page">
+          <div class="page-title"><span class="icon">🚄</span> 行 — 交通接駁</div>
+          <div class="stats-row" id="trans-cards"></div>
+          <div class="toolbar">
+            <input type="text" id="trans-search" placeholder="搜尋姓名..." oninput="renderTransTable()">
+            <select id="trans-filter" onchange="renderTransTable()">
+              <option value="">全部</option>
+              <option value="d1go">D1去 高鐵接駁</option>
+              <option value="d1back">D1回 高鐵接駁</option>
+              <option value="d2go">D2去 高鐵接駁</option>
+              <option value="d2back">D2回 高鐵接駁</option>
+              
+            </select>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>姓名</th><th>學校/機關</th><th>D1 抵達</th><th>D1 離場</th><th>D2 抵達</th><th>D2 離場</th>
+              </tr></thead>
+              <tbody id="trans-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ====== 聯絡通訊 ====== -->
+        <div id="page-contact" class="page">
+          <div class="page-title"><span class="icon">✉️</span> 聯絡通訊</div>
+
+          <div class="email-section">
+            <h3>📧 電子郵件 <span class="contact-count" id="email-count"></span></h3>
+            <div class="email-box" id="email-list"></div>
+            <button class="copy-btn copy-blue" onclick="copyEmails('semicolon')">📋 複製全部 Email (分號分隔)</button>
+            <button class="copy-btn copy-green" onclick="copyEmails('comma')">📋 複製全部 Email (逗號分隔)</button>
+            <button class="copy-btn copy-purple" onclick="openMailto()">📨 開啟郵件群發</button>
+          </div>
+
+          <div class="email-section">
+            <h3>📱 行動電話 <span class="contact-count" id="phone-count"></span></h3>
+            <div class="email-box" id="phone-list"></div>
+            <button class="copy-btn copy-blue" onclick="copyPhones()">📋 複製全部電話</button>
+          </div>
+
+          <div class="email-section">
+            <h3>🏣 郵寄地址 <span class="contact-count" id="addr-count"></span></h3>
+            <div class="table-wrap">
+              <table>
+                <thead><tr>
+                  <th>姓名</th><th>學校/機關</th><th>服務單位</th><th>學校地址</th><th>電子郵件</th><th>行動電話</th>
+                </tr></thead>
+                <tbody id="contact-tbody"></tbody>
+              </table>
+            </div>
+            <div style="margin-top:12px">
+              <button class="copy-btn copy-blue" onclick="copyMailingList()">📋 複製郵寄清單 (姓名+地址)</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== 完整名單 ====== -->
+        <div id="page-list" class="page">
+          <div class="page-title"><span class="icon">📋</span> 完整報名名單</div>
+          <div class="toolbar">
+            <input type="text" id="list-search" placeholder="搜尋姓名、學校、單位或 UID..." oninput="renderListTable()">
+            <select id="list-status" onchange="renderListTable()">
+              <option value="">所有狀態</option>
+              <option value="已報到">已報到</option>
+              <option value="未報到">未報到</option>
+            </select>
+            <button class="tool-btn btn-refresh" onclick="loadData()">🔄 重新整理</button>
+            <button class="tool-btn btn-export" onclick="exportCSV()">📥 匯出完整 Excel (CSV)</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr>
+                <th>UID</th><th>姓名</th><th>學校/機關</th><th>單位/職稱</th><th>報到狀態</th><th>報到時間</th><th>操作</th>
+              </tr></thead>
+              <tbody id="list-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- .content -->
+    </div><!-- .layout -->
+  </div><!-- #main-dashboard -->
+
+<script>
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbywpKJ91JW-HCjQ_cwL-HaoqdE08h_9JuXXqR-rxJsIwJyTWcH_o8vSVn9kBFDN9U8s/exec";
+
+    let currentPassword = "";
+    let allAttendees = [];
+
+    // ===== API (JSONP) =====
+    function callAPI(action, params, onSuccess, onError) {
+      let url = GAS_WEB_APP_URL + "?action=" + action;
+      for (let k in params) url += "&" + k + "=" + encodeURIComponent(params[k]);
+      const cb = 'jsonp_' + Math.round(100000 * Math.random());
+      url += "&callback=" + cb;
+      window[cb] = function(data) {
+        delete window[cb];
+        document.body.removeChild(s);
+        if (Array.isArray(data)) onSuccess(data);
+        else if (data && data.success) onSuccess(data.data || data);
+        else if (data && data.error) onError(data.error);
+        else onError("未知錯誤");
+      };
+      const s = document.createElement('script');
+      s.src = url;
+      s.onerror = function() { delete window[cb]; document.body.removeChild(s); onError("網路連線失敗"); };
+      document.body.appendChild(s);
+    }
+
+    function showLoading(t) { document.getElementById('loading-overlay').style.display='flex'; if(t) document.getElementById('loading-text').textContent=t; }
+    function hideLoading() { document.getElementById('loading-overlay').style.display='none'; }
+
+    // ===== Login =====
+    function login() {
+      const pwd = document.getElementById('pwd-input').value;
+      if (!pwd) return alert('請輸入密碼');
+      currentPassword = pwd;
+      document.getElementById('login-screen').style.display = 'none';
+      showLoading();
+      loadData();
+    }
+    function logout() {
+      currentPassword = ""; allAttendees = [];
+      document.getElementById('main-dashboard').style.display = 'none';
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('pwd-input').value = '';
+    }
+
+    function loadData() {
+      showLoading('載入名單中...');
+      callAPI('getAllData', { pwd: currentPassword }, (data) => {
+        allAttendees = data || [];
+        refreshAll();
+        hideLoading();
+        document.getElementById('main-dashboard').style.display = 'block';
+      }, (err) => {
+        hideLoading();
+        document.getElementById('login-screen').style.display = 'flex';
+        alert("載入失敗：" + err);
+      });
+    }
+
+    // ===== Helper: 取得欄位值 (防呆) =====
+    function getField(a, partialKey) {
+      const key = Object.keys(a).find(k => k.includes(partialKey));
+      return String((key ? a[key] : "") || "");
+    }
+
+    // ===== 頁面切換 =====
+    function switchPage(name) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + name).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+    }
+
+    // ===== 刷新所有 =====
+    function refreshAll() {
+      renderOverview();
+      renderFoodCards(); renderFoodTable();
+      renderStayCards(); renderStayTable();
+      renderTransCards(); renderTransTable();
+      renderContactPage();
+      renderListTable();
+    }
+
+    // ===== 總覽 =====
+    function renderOverview() {
+      const total = allAttendees.length;
+      let checked = 0, d1L = 0, d2L = 0, dinner = 0, dinV = 0, dinM = 0, hotel = 0, veg = 0;
+      allAttendees.forEach(a => {
+        if (a['報到狀態'] === '已報到') checked++;
+        const diet = getField(a, '飲食習慣');
+        if (diet.includes('素')) veg++;
+        const meals = getField(a, '用餐需求');
+        if (meals.includes('8月25日') && meals.includes('午餐')) d1L++;
+        if (meals.includes('8月26日') && meals.includes('午餐')) d2L++;
+        const d1End = getField(a, '第一天會議結束');
+        if (!d1End.includes('不') && (d1End.includes('晚宴') || d1End.includes('參加'))) { dinner++; if(diet.includes('素')) dinV++; else dinM++; }
+        const d1H = getField(a, '第一天住宿');
+        if (!d1H.includes('不住宿') && (d1H.includes('住宿') || d1H.includes('雙人房'))) hotel++;
+      });
+      document.getElementById('ov-total').textContent = total;
+      document.getElementById('ov-checked').textContent = checked;
+      document.getElementById('ov-rate').textContent = `已報到 (${total>0?Math.round(checked/total*100):0}%)`;
+      document.getElementById('ov-unchecked').textContent = total - checked;
+
+      document.getElementById('ov-summary-cards').innerHTML = `
+        ${makeCard('🍱', '8/25 午餐', d1L, '人', 'var(--warning)')}
+        ${makeCard('🍱', '8/26 午餐', d2L, '人', 'var(--warning)')}
+        ${makeCard('🍷', '晚宴參加', dinner, `素${dinV} / 葷${dinM}`, 'var(--purple)')}
+        ${makeCard('🏨', '需要住宿', hotel, '人', 'var(--pink)')}
+      `;
+    }
+
+    function makeCard(icon, label, num, unit, color) {
+      return `<div class="stat-card">
+        <div class="stat-label">${icon} ${label}</div>
+        <div class="stat-num" style="color:${color}">${num}</div>
+        <div class="stat-detail">${unit}</div>
+      </div>`;
+    }
+
+    // ===== 食 =====
+    function renderFoodCards() {
+      let d1L=0,d1V=0,d1M=0, d2L=0,d2V=0,d2M=0, dinner=0, dinV=0, dinM=0, veg=0;
+      allAttendees.forEach(a => {
+        const diet = getField(a,'飲食習慣'), isV = diet.includes('素');
+        const meals = getField(a,'用餐需求');
+        if (isV) veg++;
+        if (meals.includes('8月25日') && meals.includes('午餐')) { d1L++; if(isV) d1V++; else d1M++; }
+        if (meals.includes('8月26日') && meals.includes('午餐')) { d2L++; if(isV) d2V++; else d2M++; }
+        const d1End = getField(a,'第一天會議結束');
+        if (!d1End.includes('不') && (d1End.includes('晚宴')||d1End.includes('參加'))) { dinner++; if(isV) dinV++; else dinM++; }
+      });
+      document.getElementById('food-cards').innerHTML = `
+        ${makeCard('🍱','8/25 午餐',d1L,`素${d1V} / 葷${d1M}`,'var(--warning)')}
+        ${makeCard('🍱','8/26 午餐',d2L,`素${d2V} / 葷${d2M}`,'var(--warning)')}
+        ${makeCard('🍷','晚宴參加',dinner,`素${dinV} / 葷${dinM}`,'var(--purple)')}
+      `;
+    }
+    function renderFoodTable() {
+      const kw = document.getElementById('food-search').value.trim().toLowerCase();
+      const filter = document.getElementById('food-filter').value;
+      const tbody = document.getElementById('food-tbody');
+      let html = '';
+      allAttendees.forEach(a => {
+        const diet = getField(a,'飲食習慣'), meals = getField(a,'用餐需求');
+        const d1End = getField(a,'第一天會議結束');
+        const isD1L = meals.includes('8月25日') && meals.includes('午餐');
+        const isD2L = meals.includes('8月26日') && meals.includes('午餐');
+        const isDinner = !d1End.includes('不') && (d1End.includes('晚宴')||d1End.includes('參加'));
+        const isVeg = diet.includes('素');
+
+        if (filter === 'd1lunch' && !isD1L) return;
+        if (filter === 'd2lunch' && !isD2L) return;
+        if (filter === 'dinner' && !isDinner) return;
+        
+        const name = a['姓名']||'', school = a['學校機關名稱']||a['學校機關']||'';
+        if (kw && !(name+school).toLowerCase().includes(kw)) return;
+
+        html += `<tr>
+          <td style="font-weight:700">${name}</td>
+          <td>${school}</td>
+          <td><span class="badge ${isVeg?'badge-green':'badge-yellow'}">${diet||'-'}</span></td>
+          <td>${isD1L?'<span class="badge badge-blue">✓ 需要</span>':'<span style="color:var(--text-sub)">—</span>'}</td>
+          <td>${isD2L?'<span class="badge badge-blue">✓ 需要</span>':'<span style="color:var(--text-sub)">—</span>'}</td>
+          <td>${isDinner?'<span class="badge badge-purple">✓ 參加</span>':'<span style="color:var(--text-sub)">—</span>'}</td>
+        </tr>`;
+      });
+      tbody.innerHTML = html || '<tr><td colspan="6" class="empty-row">沒有符合的資料</td></tr>';
+    }
+
+    // ===== 住 =====
+    function renderStayCards() {
+      let hotel=0, noHotel=0;
+      allAttendees.forEach(a => {
+        const h = getField(a,'第一天住宿');
+        if (!h.includes('不住宿') && (h.includes('住宿')||h.includes('雙人房'))) hotel++; else noHotel++;
+      });
+      document.getElementById('stay-cards').innerHTML = `
+        ${makeCard('🏨','有住宿',hotel,'人','var(--pink)')}
+        ${makeCard('🚫','不住宿',noHotel,'人','var(--text-sub)')}
+      `;
+    }
+    function renderStayTable() {
+      const kw = document.getElementById('stay-search').value.trim().toLowerCase();
+      const filter = document.getElementById('stay-filter').value;
+      const tbody = document.getElementById('stay-tbody');
+      let html = '';
+      allAttendees.forEach(a => {
+        const h = getField(a,'第一天住宿');
+        const isHotel = !h.includes('不住宿') && (h.includes('住宿')||h.includes('雙人房'));
+        if (filter === 'hotel' && !isHotel) return;
+        if (filter === 'nohotel' && isHotel) return;
+        const name = a['姓名']||'', school = a['學校機關名稱']||a['學校機關']||'';
+        if (kw && !(name+school).toLowerCase().includes(kw)) return;
+        const stat = a['報到狀態']||'未報到';
+        let invoice = '-';
+        let roomType = '-';
+        let stayArr = isHotel ? '住宿' : (h || '不住宿');
+        
+        if (isHotel) {
+          let match = h.match(/住宿\s*\((.*)\)/);
+          if (match && match[1]) {
+            let parts = match[1].split('; ');
+            parts.forEach(p => {
+              if (p.startsWith('發票抬頭與統編:')) {
+                invoice = p.replace('發票抬頭與統編:', '').trim() || '無';
+              } else if (p.startsWith('房型:')) {
+                roomType = p.replace('房型:', '').trim();
+              } else if (p.startsWith('同房者:')) {
+                roomType += '<br><small style="color:var(--text-sub)">同房者: ' + p.replace('同房者:', '').trim() + '</small>';
+              }
+            });
+          } else {
+             stayArr = h;
+          }
+        }
+
+        html += `<tr>
+          <td style="font-weight:700; white-space:nowrap;">${name}</td>
+          <td>${school}</td>
+          <td>${isHotel?`<span class="badge badge-pink">🏨 ${stayArr}</span>`:`<span class="badge badge-yellow">🚫 ${stayArr}</span>`}</td>
+          <td><span style="font-family: monospace; font-size:14px; background:rgba(255,255,255,0.1); color:#e2e8f0; padding:2px 6px; border-radius:4px;">${invoice}</span></td>
+          <td style="line-height:1.5;">${roomType}</td>
+          <td><span class="badge ${stat==='已報到'?'badge-green':'badge-yellow'}">${stat}</span></td>
+        </tr>`;
+      });
+      tbody.innerHTML = html || '<tr><td colspan="6" class="empty-row">沒有符合的資料</td></tr>';
+    }
+
+    // ===== 行 =====
+    function renderTransCards() {
+      let d1Go=0,d1Back=0,d2Go=0,d2Back=0;
+      allAttendees.forEach(a => {
+        const t1 = getField(a,'第一天抵達交通');
+        const t2 = getField(a,'第二天抵達交通');
+        const e1 = getField(a,'第一天會議結束');
+        const e2 = getField(a,'第二天離校');
+        if (t1.includes('高鐵')) d1Go++;
+                if (e1.includes('搭接駁車至高鐵左營站')) d1Back++;
+        if (t2.includes('高鐵')) d2Go++;
+        if (e2.includes('12:30') || e2.includes('接駁車至左營')) d2Back++;
+      });
+      document.getElementById('trans-cards').innerHTML = `
+        ${makeCard('🚄','D1去 高鐵→會場',d1Go,'人','var(--primary)')}
+        ${makeCard('🚌','D1回 會場→高鐵',d1Back,'人','var(--primary)')}
+        ${makeCard('🚄','D2去 高鐵→會場',d2Go,'人','var(--cyan)')}
+        ${makeCard('🚌','D2回 12:30發車',d2Back,'人','var(--cyan)')}
+              `;
+    }
+    function renderTransTable() {
+      const kw = document.getElementById('trans-search').value.trim().toLowerCase();
+      const filter = document.getElementById('trans-filter').value;
+      const tbody = document.getElementById('trans-tbody');
+      let html = '';
+      allAttendees.forEach(a => {
+        const t1 = getField(a,'第一天抵達交通');
+        const e1 = getField(a,'第一天會議結束');
+        const t2 = getField(a,'第二天抵達交通');
+        const e2 = getField(a,'第二天離校');
+        const isD1Go = t1.includes('高鐵');
+        const isD1Back = e1.includes('搭接駁車至高鐵左營站');
+        const isD2Go = t2.includes('高鐵');
+        const isD2Back = e2.includes('12:30') || e2.includes('接駁車至左營');
+        
+        if (filter === 'd1go' && !isD1Go) return;
+        if (filter === 'd1back' && !isD1Back) return;
+        if (filter === 'd2go' && !isD2Go) return;
+        if (filter === 'd2back' && !isD2Back) return;
+        
+        const name = a['姓名']||'', school = a['學校機關名稱']||a['學校機關']||'';
+        if (kw && !(name+school).toLowerCase().includes(kw)) return;
+
+        html += `<tr>
+          <td style="font-weight:700">${name}</td>
+          <td>${school}</td>
+          <td>${t1||'-'}</td>
+          <td>${e1||'-'}</td>
+          <td>${t2||'-'}</td>
+          <td>${e2||'-'}</td>
+        </tr>`;
+      });
+      tbody.innerHTML = html || '<tr><td colspan="6" class="empty-row">沒有符合的資料</td></tr>';
+    }
+
+    // ===== 完整名單 =====
+    function renderListTable() {
+      const kw = document.getElementById('list-search').value.trim().toLowerCase();
+      const sf = document.getElementById('list-status').value;
+      const tbody = document.getElementById('list-tbody');
+      let html = '';
+      allAttendees.forEach(a => {
+        const stat = a['報到狀態']||'未報到';
+        if (sf && stat !== sf) return;
+        const match = Object.values(a).join(' ').toLowerCase();
+        if (kw && !match.includes(kw)) return;
+        const bc = stat==='已報到'?'badge-green':'badge-yellow';
+        const toggle = stat==='已報到'?'未報到':'已報到';
+        const toggleTxt = stat==='已報到'?'取消報到':'手動報到';
+        html += `<tr>
+          <td style="font-family:monospace;color:var(--primary);font-weight:700;font-size:11px">${a['UID']||'-'}</td>
+          <td style="font-weight:700">${a['姓名']||'-'}</td>
+          <td>${a['學校機關名稱']||a['學校機關']||'-'}</td>
+          <td>${a['服務單位']||'-'}<br><span style="color:var(--text-sub);font-size:12px">${a['職稱']||''}</span></td>
+          <td><span class="badge ${bc}">${stat}</span></td>
+          <td style="font-size:12px;color:var(--text-sub)">${a['報到時間']||'-'}</td>
+          <td>
+            <button class="action-btn btn-toggle" onclick="toggleCheckIn('${a['UID']}','${toggle}')">${toggleTxt}</button>
+            <button class="action-btn btn-delete" onclick="deleteRecord('${a['UID']}','${a['姓名']}')">刪除</button>
+          </td>
+        </tr>`;
+      });
+      tbody.innerHTML = html || '<tr><td colspan="7" class="empty-row">沒有符合的資料</td></tr>';
+    }
+
+    // ===== 操作 =====
+    function toggleCheckIn(uid, newStatus) {
+      if (!confirm(`確定要改為「${newStatus}」嗎？`)) return;
+      showLoading(`設定 ${newStatus}...`);
+      callAPI('toggleCheckIn', { uid, status: newStatus, pwd: currentPassword }, () => {
+        let item = allAttendees.find(a => a['UID'] === uid);
+        if (item) {
+          item['報到狀態'] = newStatus;
+          if (newStatus === '已報到') {
+            let d = new Date();
+            item['報到時間'] = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+          } else { item['報到時間'] = ''; }
+        }
+        refreshAll(); hideLoading();
+      }, (err) => { hideLoading(); alert("操作失敗：" + err); });
+    }
+
+    function deleteRecord(uid, name) {
+      if (!confirm(`⚠️ 確定要永久刪除「${name}」？此操作無法復原！`)) return;
+      showLoading("刪除中...");
+      callAPI('deleteData', { uid, pwd: currentPassword }, () => {
+        allAttendees = allAttendees.filter(a => a['UID'] !== uid);
+        refreshAll(); hideLoading();
+      }, (err) => { hideLoading(); alert("刪除失敗：" + err); });
+    }
+
+    // ===== 聯絡通訊 =====
+    function renderContactPage() {
+      const emails = [], phones = [];
+      let contactHtml = '';
+      allAttendees.forEach(a => {
+        const email = String(a['電子郵件'] || '').trim();
+        const phone = String(a['行動電話'] || '').trim();
+        const name = a['姓名'] || '-';
+        const school = a['學校機關名稱'] || a['學校機關'] || '-';
+        const unit = a['服務單位'] || '-';
+        const addr = String(a['學校地址'] || '').trim();
+        if (email) emails.push(email);
+        if (phone) phones.push(phone);
+        contactHtml += `<tr>
+          <td style="font-weight:700">${name}</td>
+          <td>${school}</td>
+          <td>${unit}</td>
+          <td style="font-size:12px">${addr || '-'}</td>
+          <td style="font-size:12px;color:var(--primary)">${email || '-'}</td>
+          <td style="font-size:12px">${phone || '-'}</td>
+        </tr>`;
+      });
+
+      document.getElementById('email-count').textContent = `(共 ${emails.length} 筆)`;
+      document.getElementById('email-list').textContent = emails.join(' ; ');
+
+      document.getElementById('phone-count').textContent = `(共 ${phones.length} 筆)`;
+      document.getElementById('phone-list').textContent = phones.join(' ; ');
+
+      document.getElementById('addr-count').textContent = `(共 ${allAttendees.length} 筆)`;
+      document.getElementById('contact-tbody').innerHTML = contactHtml || '<tr><td colspan="6" class="empty-row">沒有資料</td></tr>';
+    }
+
+    function showToast(msg) {
+      const t = document.createElement('div');
+      t.className = 'toast';
+      t.textContent = msg;
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2000);
+    }
+
+    function copyEmails(mode) {
+      const emails = allAttendees.map(a => String(a['電子郵件']||'').trim()).filter(e => e);
+      const sep = mode === 'semicolon' ? '; ' : ', ';
+      navigator.clipboard.writeText(emails.join(sep)).then(() => {
+        showToast(`✅ 已複製 ${emails.length} 筆 Email!`);
+      });
+    }
+
+    function copyPhones() {
+      const phones = allAttendees.map(a => String(a['行動電話']||'').trim()).filter(p => p);
+      navigator.clipboard.writeText(phones.join(', ')).then(() => {
+        showToast(`✅ 已複製 ${phones.length} 筆電話!`);
+      });
+    }
+
+    function openMailto() {
+      const emails = allAttendees.map(a => String(a['電子郵件']||'').trim()).filter(e => e);
+      if (!emails.length) return alert('沒有 Email 資料');
+      // mailto 有長度限制，超過時用 bcc
+      if (emails.length > 50) {
+        // 先複製到剪貼簿，再提示用戶
+        navigator.clipboard.writeText(emails.join('; ')).then(() => {
+          alert(`人數較多 (${emails.length} 人)，已將全部 Email 複製到剪貼簿！\n請開啟您的郵件程式，貼到「收件人」或「密件副本 BCC」欄位即可。`);
+        });
+      } else {
+        window.location.href = 'mailto:' + emails.join(',');
+      }
+    }
+
+    function copyMailingList() {
+      let lines = [];
+      allAttendees.forEach(a => {
+        const name = a['姓名'] || '';
+        const school = a['學校機關名稱'] || a['學校機關'] || '';
+        const unit = a['服務單位'] || '';
+        const addr = String(a['學校地址'] || '').trim();
+        if (addr) {
+          lines.push(`${name}\t${school} ${unit}\t${addr}`);
+        }
+      });
+      if (!lines.length) return alert('沒有地址資料');
+      navigator.clipboard.writeText(lines.join('\n')).then(() => {
+        showToast(`✅ 已複製 ${lines.length} 筆郵寄清單!`);
+      });
+    }
+
+    // ===== 匯出 CSV (包含所有欄位) =====
+    function exportCSV() {
+      if (!allAttendees.length) { alert("沒有資料"); return; }
+      let headers = Object.keys(allAttendees[0]).filter(k => k !== '_rowIndex');
+      let csv = "\uFEFF" + headers.join(',') + '\r\n';
+      allAttendees.forEach(a => {
+        csv += headers.map(h => `"${String(a[h]||'').replace(/"/g,'""')}"`).join(',') + '\r\n';
+      });
+      const blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `大會完整報名名單_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+    }
+    function exportStayExcel() {
+      let csv = '\uFEFF'; // BOM for UTF-8 Excel compatibility
+      csv += '姓名,學校/機關,住宿安排,發票抬頭與統編,房型,同房者,報到狀態\n';
+      
+      const kw = document.getElementById('stay-search').value.trim().toLowerCase();
+      const filter = document.getElementById('stay-filter').value;
+      
+      allAttendees.forEach(a => {
+        const h = getField(a,'第一天住宿');
+        const isHotel = !h.includes('不住宿') && (h.includes('住宿')||h.includes('雙人房'));
+        if (filter === 'hotel' && !isHotel) return;
+        if (filter === 'nohotel' && isHotel) return;
+        const name = a['姓名']||'', school = a['學校機關名稱']||a['學校機關']||'';
+        if (kw && !(name+school).toLowerCase().includes(kw)) return;
+        const stat = a['報到狀態']||'未報到';
+        
+        let invoice = '無', roomType = '無', roommate = '無';
+        let stayArr = isHotel ? '住宿' : (h || '不住宿');
+        if (isHotel) {
+          let match = h.match(/住宿\s*\((.*)\)/);
+          if (match && match[1]) {
+            let parts = match[1].split('; ');
+            parts.forEach(p => {
+              if (p.startsWith('發票抬頭與統編:')) invoice = p.replace('發票抬頭與統編:', '').trim() || '無';
+              else if (p.startsWith('房型:')) roomType = p.replace('房型:', '').trim();
+              else if (p.startsWith('同房者:')) roommate = p.replace('同房者:', '').trim();
+            });
+          } else {
+             stayArr = h;
+          }
+        }
+        
+        // Escape quotes
+        const row = [name, school, stayArr, invoice, roomType, roommate, stat].map(v => `"${(v+'').replace(/"/g, '""')}"`);
+        csv += row.join(',') + '\n';
+      });
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", "住宿統計表.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    function clearAllDataConfirm() {
+      const pwd1 = prompt('⚠️ 警告：這將會清除「所有報名資料」！\n請輸入管理者密碼以繼續：');
+      if (!pwd1) return;
+      if (pwd1 !== currentPassword) {
+        alert('密碼錯誤！');
+        return;
+      }
+      
+      const confirmWord = prompt('⚠️ 這是極度危險的操作！\n請輸入「確認清除」四個字以執行刪除：');
+      if (confirmWord !== '確認清除') {
+        alert('輸入錯誤，操作已取消。');
+        return;
+      }
+
+      if (confirm('最後確認：\n您確定要永久刪除所有資料嗎？此操作無法復原！')) {
+        showLoading('清除資料中...');
+        callAPI('clearAllData', { pwd: currentPassword }, () => {
+          hideLoading();
+          alert('✅ 所有資料已清除！');
+          fetchData();
+        }, (err) => {
+          hideLoading();
+          alert('清除失敗: ' + err);
+        });
+      }
+    }
+</script>
+
+</body>
+</html>
